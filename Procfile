@@ -1,0 +1,1 @@
+web: gunicorn cricket_booking.wsgi

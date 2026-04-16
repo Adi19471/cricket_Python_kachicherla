@@ -1,17 +1,24 @@
-# New Task: Color-code Time Slots (Green=Available, Red=Not Available)
+# Fix Logout and Login Page Issues
 
-## Plan:
-**Information Gathered:**
-- index.html has slots grid, JS fetches booked slots via /api/booked-slots/, adds .slot-booked (gray).
-- CSS: .slot-available (green), .slot-booked (gray), needs red for booked.
-- No backend change needed.
+## Information Gathered:
+- Navbar in base.html has logout button using `{% url 'logout' %}` when authenticated.
+- cricket_booking/urls.py defines logout URL with auth_views.LogoutView (redirect to login).
+- login.html template exists but URLs expect `registration/login.html` which is missing.
+- Root cause: logout redirects to login, but template not found -> broken page.
 
-**Detailed Plan:**
-1. Update base.html CSS: .slot-booked { background: #dc3545 !important; } (red).
-2. index.html: Add "Not Available" text on booked slots via JS.
-3. Keep green for available.
+## Detailed Plan:
+1. Create `booking/templates/registration/login.html` with exact content from `booking/templates/login.html`.
+   - This fixes LoginView template lookup without changing URLs.
+2. No other changes needed (backend logic correct).
 
-**Dependent Files:** booking/templates/base.html
-**Followup:** Test on running server - booked slots red "Not Available", available green.
+## Dependent Files:
+- New: booking/templates/registration/login.html
 
-Ready to proceed? Confirm.
+## Followup Steps:
+1. Run `python manage.py runserver`.
+2. Test: Login -> Navbar shows logout -> Click logout -> Redirects to working login page -> Submit login form -> Redirect to home.
+3. Check no errors in console/server logs.
+
+## Progress:
+- [x] Step 1: Created booking/templates/registration/login.html
+- [ ] Step 2: Test logout/login flow on server
