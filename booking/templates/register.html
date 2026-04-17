@@ -1,104 +1,176 @@
 {% extends 'base.html' %}
 
-{% block title %}Register - Black Box Cricket{% endblock %}
+{% block title %}Register - Cricket Booking{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-5">
-            
-            <!-- Registration Card -->
-            <div class="card shadow-lg border-0" style="background: rgba(26, 26, 26, 0.95);">
-                <div class="card-body p-5">
-                    
-                    <!-- Header -->
-                    <div class="text-center mb-5">
-                        <div class="mx-auto mb-4" style="width: 80px; height: 80px; background: rgba(0, 245, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-cricket-ball fa-3x text-primary"></i>
+<div class="min-vh-100 d-flex align-items-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                
+                <!-- Registration Card -->
+                <div class="card">
+                    <div class="card-body p-5">
+                        
+                        <!-- Header -->
+                        <div class="text-center mb-5">
+                            <div class="mx-auto mb-4" style="width: 70px; height: 70px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-cricket-ball fa-2x" style="color: white;"></i>
+                            </div>
+                            <h2 class="fw-bold mb-2">Join Cricket Booking</h2>
+                            <p class="text-muted">Create your account and start booking slots</p>
                         </div>
-                        <h2 class="fw-bold mb-1">Join Black Box</h2>
-                        <p class="text-muted">Create your account and start booking turf slots</p>
-                    </div>
 
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.non_field_errors }}
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            {{ form.non_field_errors.0 }}
+                        </div>
+                        {% endif %}
 
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.first_name.label_tag }}
-                                    {{ form.first_name }}
-                                    {{ form.first_name.errors }}
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            <!-- First Name & Last Name -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="id_first_name">
+                                            <i class="fas fa-user me-2" style="color: #10b981;"></i> First Name
+                                        </label>
+                                        <input type="text" name="first_name" class="form-control" id="id_first_name" placeholder="Enter your first name" required>
+                                        {% if form.first_name.errors %}
+                                            <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                                {{ form.first_name.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="id_last_name">
+                                            <i class="fas fa-user me-2" style="color: #10b981;"></i> Last Name
+                                        </label>
+                                        <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter your last name" required>
+                                        {% if form.last_name.errors %}
+                                            <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                                {{ form.last_name.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form.last_name.label_tag }}
-                                    {{ form.last_name }}
-                                    {{ form.last_name.errors }}
-                                </div>
+
+                            <!-- Username -->
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="id_username">
+                                    <i class="fas fa-at me-2" style="color: #10b981;"></i> Username
+                                </label>
+                                <input type="text" name="username" class="form-control" id="id_username" placeholder="Enter your username" required>
+                                {% if form.username.errors %}
+                                    <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                        {{ form.username.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="id_email">
+                                    <i class="fas fa-envelope me-2" style="color: #10b981;"></i> Email Address
+                                </label>
+                                <input type="email" name="email" class="form-control" id="id_email" placeholder="Enter your email" required>
+                                {% if form.email.errors %}
+                                    <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="id_phone_number">
+                                    <i class="fas fa-phone me-2" style="color: #10b981;"></i> Phone Number
+                                </label>
+                                <input type="text" name="phone_number" class="form-control" id="id_phone_number" placeholder="Enter your phone number" required>
+                                {% if form.phone_number.errors %}
+                                    <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                        {{ form.phone_number.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="id_password1">
+                                    <i class="fas fa-lock me-2" style="color: #10b981;"></i> Password
+                                </label>
+                                <input type="password" name="password1" class="form-control" id="id_password1" placeholder="Enter your password" required>
+                                {% if form.password1.errors %}
+                                    <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="form-group mb-4">
+                                <label class="form-label" for="id_password2">
+                                    <i class="fas fa-lock me-2" style="color: #10b981;"></i> Confirm Password
+                                </label>
+                                <input type="password" name="password2" class="form-control" id="id_password2" placeholder="Confirm your password" required>
+                                {% if form.password2.errors %}
+                                    <div class="alert alert-danger alert-sm mt-2" style="padding: 8px 12px; font-size: 0.85rem;">
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                <i class="fas fa-user-plus me-2"></i> Create Account
+                            </button>
+                        </form>
+
+                        <!-- Divider -->
+                        <div class="text-center my-4" style="position: relative;">
+                            <div style="border-top: 1px solid #e5e7eb;">
+                                <span style="background: white; padding: 0 12px; color: #6b7280; font-size: 0.85rem;">Already a member?</span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            {{ form.username.label_tag }}
-                            {{ form.username }}
-                            {{ form.username.errors }}
-                        </div>
+                        <!-- Login Link -->
+                        <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100 py-3 fw-bold" style="border: 2px solid #10b981; color: #10b981;">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login Here
+                        </a>
 
-                        <div class="mb-3">
-                            {{ form.email.label_tag }}
-                            {{ form.email }}
-                            {{ form.email.errors }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.phone_number.label_tag }}
-                            {{ form.phone_number }}
-                            {{ form.phone_number.errors }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.password1.label_tag }}
-                            {{ form.password1 }}
-                            {{ form.password1.errors }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form.password2.label_tag }}
-                            {{ form.password2 }}
-                            {{ form.password2.errors }}
-                        </div>
-
-                        <button type="submit" 
-                                class="btn btn-primary w-100 py-3 fs-5 fw-semibold rounded-pill mt-3">
-                            <i class="fas fa-user-plus me-2"></i>Create Account
-                        </button>
-                    </form>
-
-                    <!-- Login Link -->
-                    <div class="text-center mt-5">
-                        <p class="text-muted mb-0">
-                            Already have an account? 
-                            <a href="{% url 'login' %}" 
-                               class="text-primary fw-bold text-decoration-none">
-                                Login Here
-                            </a>
-                        </p>
                     </div>
-
                 </div>
-            </div>
 
-            <!-- Footer Note -->
-            <div class="text-center mt-4">
-                <small class="text-muted">
-                    Black Box Cricket • Premium Turf Booking Platform
-                </small>
             </div>
-
         </div>
     </div>
 </div>
+
+<style>
+.form-control:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.15);
+}
+
+.btn-outline-secondary {
+    border-color: #10b981 !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    color: white !important;
+}
+
+.alert-sm {
+    margin-bottom: 0;
+    border: none;
+}
+</style>
 {% endblock %}

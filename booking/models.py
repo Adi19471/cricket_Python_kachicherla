@@ -21,14 +21,27 @@ class TimeSlot(models.Model):
         return f"{self.start_time} - {self.end_time}"
 
 class Booking(models.Model):
+    BOOKING_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
     slots = models.ManyToManyField(TimeSlot)
     amount = models.IntegerField(default=500)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     is_paid = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='pending')
     razorpay_order_id = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.date} - {self.slots.count()} slots"
+    
+    def mark_as_completed(self):
+        """Mark booking as completed and block empty slots"""
+        if self.is_paid:
+            self.status = 'completed'
+            self.save()

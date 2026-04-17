@@ -46,12 +46,35 @@ def api_booked_slots(request, date_str):
     if not date:
         return JsonResponse({'error': 'Invalid date'}, status=400)
     
+    # Get all booked slots from paid bookings
     booked_qs = Booking.objects.filter(
         date=date, 
         is_paid=True
     ).values_list('slots__id', flat=True)
     booked_slots = list(set(booked_qs))
-    return JsonResponse({'booked_slots': booked_slots})
+    
+    # Check if there's any completed booking on this date
+    completed_booking_exists = Booking.objects.filter(
+        date=date, 
+        status='completed'
+    ).exists()
+    
+    # If a booking is completed, block all empty slots
+    blocked_empty_slots = []
+    if completed_booking_exists:
+        # Get all slots that are NOT in any completed booking
+        completed_booking_slots = set(Booking.objects.filter(
+            date=date,
+            status='completed'
+        ).values_list('slots__id', flat=True))
+        
+        all_slots = set(TimeSlot.objects.values_list('id', flat=True))
+        blocked_empty_slots = list(all_slots - completed_booking_slots)
+    
+    return JsonResponse({
+        'booked_slots': booked_slots,
+        'blocked_empty_slots': blocked_empty_slots
+    })
 
 @login_required
 def book_slot(request):
@@ -67,9 +90,27 @@ def book_slot(request):
             date=date, is_paid=True
         ).values_list('slots__id', flat=True))
         
-        available_slots = [sid for sid in slot_ids if sid not in booked_on_date]
+        # Check if there's any completed booking on this date
+        completed_booking_exists = Booking.objects.filter(
+            date=date, 
+            status='completed'
+        ).exists()
+        
+        # If a booking is completed, block all empty slots
+        blocked_slots = set()
+        if completed_booking_exists:
+            completed_booking_slots = set(Booking.objects.filter(
+                date=date,
+                status='completed'
+            ).values_list('slots__id', flat=True))
+            
+            all_slots = set(TimeSlot.objects.values_list('id', flat=True))
+            blocked_slots = all_slots - completed_booking_slots
+        
+        # Check if any requested slot is blocked or already booked
+        available_slots = [sid for sid in slot_ids if sid not in booked_on_date and sid not in blocked_slots]
         if len(available_slots) != len(slot_ids):
-            return JsonResponse({'error': 'Some slots already booked'}, status=400)
+            return JsonResponse({'error': 'Some slots already booked or blocked'}, status=400)
         
         total_amount = len(available_slots) * 500
         
@@ -118,7 +159,7 @@ def payment_success(request):
                 'razorpay_signature': signature
             })
             booking.is_paid = True
-            booking.save()
+            booking.mark_as_completed()  # Mark booking as completed
             return JsonResponse({'success': True})
         except Exception:
             return JsonResponse({'success': False, 'error': 'Verification failed'})

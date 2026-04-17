@@ -3,13 +3,13 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 
 class CustomUserCreationForm(forms.Form):
-    first_name = forms.CharField(max_length=30, required=True, label='First Name')
-    last_name = forms.CharField(max_length=30, required=True, label='Last Name')
-    username = forms.CharField(max_length=150, required=True, label='Username')
-    email = forms.EmailField(required=True, label='Email')
-    phone_number = forms.CharField(max_length=15, required=True, label='Phone Number')
-    password1 = forms.CharField(widget=forms.PasswordInput, label='Password')
-    password2 = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
+    first_name = forms.CharField(max_length=30, required=True, label='First Name', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}))
+    last_name = forms.CharField(max_length=30, required=True, label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}))
+    username = forms.CharField(max_length=150, required=True, label='Username', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}))
+    email = forms.EmailField(required=True, label='Email', widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
+    phone_number = forms.CharField(max_length=15, required=True, label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your phone number'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter your password'}), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm your password'}), label='Confirm Password')
 
     def clean_username(self):
         username = self.cleaned_data['username']

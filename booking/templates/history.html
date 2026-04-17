@@ -1,30 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}My Bookings - Black Box Cricket{% endblock %}
+{% block title %}My Bookings - Cricket Booking{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="py-3">
     
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h1 class="fw-bold display-5 section-title">
-                <i class="fas fa-history me-3 text-primary"></i>My Bookings
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h1 class="fw-bold mb-2" style="font-size: 2.5rem;">
+                <i class="fas fa-history me-2" style="color: var(--primary);"></i> My Bookings
             </h1>
-            <p class="text-muted mb-0">Track all your cricket turf bookings</p>
+            <p class="text-muted mb-0">Track all your cricket slot bookings</p>
         </div>
         
         <!-- Date Filter -->
-        <div class="d-flex align-items-center gap-3">
-            <label class="text-muted fw-medium">Filter by Date:</label>
-            <div class="input-group" style="width: 280px;">
-                <input type="date" 
-                       id="search-date" 
-                       class="form-control bg-dark text-white border-secondary"
-                       value="{{ search_date|default:today }}">
-                <button class="btn btn-primary" onclick="filterBookings()">
-                    <i class="fas fa-filter"></i>
-                </button>
+        <div class="col-md-6 mt-3 mt-md-0">
+            <div class="d-flex align-items-center gap-2 justify-content-md-end">
+                <label class="text-muted fw-medium">Filter by Date:</label>
+                <div class="input-group" style="max-width: 200px;">
+                    <input type="date" id="search-date" class="form-control" value="{{ search_date|default:today }}">
+                    <button class="btn btn-primary" onclick="filterBookings()">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -33,24 +32,26 @@
         <div class="row g-4">
             {% for booking in bookings %}
             <div class="col-lg-6 col-xl-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-header bg-dark border-bottom border-primary d-flex justify-content-between align-items-center py-3">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
-                            <span class="badge bg-primary fs-6">
-                                <i class="fas fa-calendar-alt me-1"></i>
+                            <span class="badge bg-primary" style="font-size: 0.9rem;">
+                                <i class="fas fa-calendar-alt me-2"></i>
                                 {{ booking.date|date:"D, d M Y" }}
                             </span>
                         </div>
-                        <span class="text-success fw-bold fs-5">₹{{ booking.total_amount }}</span>
+                        <span class="fw-bold" style="font-size: 1.3rem; color: var(--secondary);">₹{{ booking.total_amount }}</span>
                     </div>
                     
                     <div class="card-body">
                         <!-- Time Slots -->
                         <div class="mb-4">
-                            <small class="text-muted d-block mb-2">BOOKED SLOTS</small>
+                            <small class="text-muted d-block mb-3 fw-bold">
+                                <i class="fas fa-clock me-2"></i> BOOKED SLOTS
+                            </small>
                             <div class="d-flex flex-wrap gap-2">
                                 {% for slot in booking.slots.all %}
-                                <div class="time-slot bg-dark border border-primary text-primary fw-semibold px-4 py-2 rounded-3">
+                                <div class="badge" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); font-size: 0.9rem; padding: 8px 12px;">
                                     {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
                                 </div>
                                 {% endfor %}
@@ -58,33 +59,37 @@
                         </div>
 
                         <!-- Booking Details -->
-                        <div class="row text-muted small">
-                            <div class="col-6 mb-3">
-                                <strong>Status</strong><br>
-                                {% if booking.is_paid %}
-                                    <span class="badge bg-success px-3 py-2">
-                                        <i class="fas fa-check-circle me-1"></i>Payment Successful
+                        <div class="border-top pt-4">
+                            <div class="row text-sm">
+                                <div class="col-6 mb-3">
+                                    <small class="text-muted fw-bold">Status</small><br>
+                                    {% if booking.is_paid %}
+                                        <span class="badge" style="background: #d1fae5; color: #065f46; font-size: 0.85rem; padding: 6px 10px;">
+                                            <i class="fas fa-check-circle me-1"></i> Paid
+                                        </span>
+                                    {% else %}
+                                        <span class="badge" style="background: #fef3c7; color: #92400e; font-size: 0.85rem; padding: 6px 10px;">
+                                            <i class="fas fa-clock me-1"></i> Pending
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <small class="text-muted fw-bold">Booking Status</small><br>
+                                    <span class="badge" style="background: #ede9fe; color: #4c1d95; font-size: 0.85rem; padding: 6px 10px;">
+                                        {{ booking.get_status_display }}
                                     </span>
-                                {% else %}
-                                    <span class="badge bg-warning px-3 py-2 text-dark">
-                                        <i class="fas fa-clock me-1"></i>Pending
-                                    </span>
-                                {% endif %}
-                            </div>
-                            <div class="col-6 mb-3">
-                                <strong>Payment ID</strong><br>
-                                <span class="text-white">{{ booking.razorpay_order_id|default:'Not Available' }}</span>
-                            </div>
-                            <div class="col-12">
-                                <strong>Booked On</strong><br>
-                                <span class="text-white">{{ booking.created_at|date:'d M Y • h:i A' }}</span>
+                                </div>
+                                <div class="col-12">
+                                    <small class="text-muted fw-bold">Booked On</small><br>
+                                    <small class="text-muted">{{ booking.created_at|date:"d M Y • h:i A" }}</small>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card-footer bg-dark border-top border-secondary py-3">
-                        <a href="{% url 'home' %}" class="btn btn-outline-primary w-100">
-                            <i class="fas fa-plus me-2"></i>Book Another Slot
+                    <div class="card-footer py-3">
+                        <a href="{% url 'home' %}" class="btn btn-primary w-100 btn-sm">
+                            <i class="fas fa-plus me-2"></i> Book Another Slot
                         </a>
                     </div>
                 </div>
@@ -96,7 +101,7 @@
         <!-- Empty State -->
         <div class="text-center py-5 my-5">
             <div class="mb-4">
-                <i class="fas fa-inbox fa-5x text-muted opacity-50"></i>
+                <i class="fas fa-inbox fa-5x" style="color: var(--text-light); opacity: 0.5;"></i>
             </div>
             <h3 class="text-muted mb-3">No Bookings Yet</h3>
             <p class="text-muted lead col-md-6 mx-auto">
@@ -104,7 +109,7 @@
                 Start your first session today!
             </p>
             <a href="{% url 'home' %}" class="btn btn-primary btn-lg px-5 mt-3">
-                <i class="fas fa-cricket-ball me-2"></i>Book Your First Slot
+                <i class="fas fa-cricket-ball me-2"></i> Book Your First Slot
             </a>
         </div>
     {% endif %}
