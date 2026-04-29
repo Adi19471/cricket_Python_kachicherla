@@ -179,3 +179,28 @@ def history(request):
             bookings = bookings.filter(date=search_date)
     today = timezone.now().date()
     return render(request, "history.html", {"bookings": bookings, "search_date": search_date_str, "today": today})
+
+
+@login_required
+def login_view(request):
+    from django.contrib.auth import login as auth_login
+    from django.contrib.auth import authenticate
+    if request.user.is_authenticated:
+        return redirect('home')
+        
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        remember = request.POST.get('remember')
+        
+        user = authenticate(request, username=username, password=password)
+        if user:
+            auth_login(request, user)
+            if remember:
+                request.session.set_expiry(1209600)  # 2 weeks
+            return redirect('home')
+        else:
+            # Handle error in template
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+    
+    return render(request, 'login.html')
