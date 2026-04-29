@@ -13,7 +13,7 @@
     <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Custom Styles -->
-    <link href="{% static 'booking/styles.css' %}" rel="stylesheet">
+<link href="{% static 'booking/modern-ui.css' %}" rel="stylesheet">
 </head>
 <body class="d-flex flex-column">
 
@@ -64,13 +64,13 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="container my-5 py-4">
+    <main class="container-fluid my-5 py-4">
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
     <footer class="mt-auto py-4">
-        <div class="container text-center">
+        <div class="container-fluid text-center">
             <p>&copy; 2026 Cricket Booking System. All Rights Reserved.</p>
         </div>
     </footer>

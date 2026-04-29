@@ -1,117 +1,132 @@
 {% extends 'base.html' %}
 
-{% block title %}Book Slots - Cricket Booking{% endblock %}
+{% block title %}Book Cricket Slots - Professional Booking System{% endblock %}
 
 {% block content %}
-<div class="py-3">
-
-    <!-- Header -->
-    <div class="row align-items-center mb-5">
-        <div class="col-md-6">
-            <h1 class="fw-bold mb-2" style="font-size: 2.5rem;">
-                <i class="fas fa-calendar-check me-2" style="color: var(--primary);"></i> Book Your Slot
-            </h1>
-            <p class="text-muted mb-0 fs-5">Select your preferred date and time</p>
-        </div>
-        
-
-                 <!-- Proceed Button -->
-    <div class="text-center mt-5 mb-4">
-        <button id="proceed-payment" 
-                class="btn btn-primary btn-lg px-5 py-3 fw-bold"
-                disabled>
-            <i class="fas fa-credit-card me-2"></i> Proceed to Payment
-        </button>
-    </div>
-        <div class="col-md-6 text-md-end text-center mt-3 mt-md-0">
-            <div class="total-price mb-2" id="total-price">₹0</div>
-            <small class="text-muted" id="slot-count">(0 slots selected)</small>
-        </div>
-
-
-
-    </div>
-
-    <div class="row g-4">
-
-        <!-- Left: Date Picker + Selected Slots -->
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-calendar-alt me-2"></i> Select Date
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    
-                    <div class="form-group">
-                        <label class="form-label">Pick a Date</label>
-                        <input type="date" 
-                               id="booking-date" 
-                               class="form-control"
-                               required>
-                    </div>
-
-                    <div class="mt-5">
-                        <h6 class="fw-bold mb-3">
-                            <i class="fas fa-check-circle me-2" style="color: var(--secondary);"></i> Selected Slots
-                        </h6>
-                        <div id="selected-slots-list" class="d-flex flex-wrap gap-2 mb-4 min-height-100"></div>
-                    </div>
-
-                    <!-- Price Summary -->
-                    <div class="price-summary mt-4">
-                        <div class="price-row">
-                            <span><i class="fas fa-tag me-2"></i> Rate per slot</span>
-                            <span class="fw-semibold">₹500 / hour</span>
-                        </div>
-                        <div class="price-row total">
-                            <span><i class="fas fa-calculator me-2"></i> Total Amount</span>
-                            <span id="total-amount">₹0</span>
-                        </div>
-                    </div>
-
+<!-- Hero Header -->
+<section class="hero-section py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <h3 class="display-5 fw-bold mb-4 hero-title">
+                    <i class="fas fa-cricket-bat-ball text-primary me-3"></i>
+                    Book Premium Cricket Slots
+                </h3>
+                <p class="lead mb-4 text-large">
+                    Choose your perfect time slot with real-time availability. 
+                 
+                </p>
+            </div>
+            <div class="col-lg-5 text-center text-lg-end">
+                <div class="sticky-price-card p-4 rounded-5 shadow-xl">
+                    <div class="total-price h2 mb-3 fw-bold" id="total-price">₹0</div>
+                    <div class="h6 text-muted mb-2" id="slot-count">0 slots selected</div>
+                    <button id="proceed-payment" class="btn btn-gradient btn-lg w-100 py-3 fw-bold rounded-pill" disabled>
+                        <i class="fas fa-credit-card me-2"></i> Proceed to Secure Payment
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <!-- Right: Time Slots Grid -->
-        <div class="col-lg-8">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-clock me-2"></i> Available Time Slots
+<div class="container-fluid">
+    <div class="row g-5">
+        
+        <!-- Booking Panel -->
+        <div class="col-xl-4 col-lg-5">
+            <!-- Date Selector -->
+            <div class="card glass-card h-100 mb-4">
+                <div class="card-header border-0">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-day text-primary me-2"></i>
+                        Select Date & Time
                     </h5>
                 </div>
-                
                 <div class="card-body p-4">
-                    <div class="row g-3" id="slots-grid">
-                        {% for slot in slots %}
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-3">
-                            <div class="slot-box"
-                                 data-slot-id="{{ slot.id }}"
-                                 data-price="500"
-                                 data-start="{{ slot.start_time|time:'H:i' }}"
-                                 data-end="{{ slot.end_time|time:'H:i' }}">
-                                <div class="fw-semibold">{{ slot.start_time|time:"H:i" }}</div>
-                                <div class="text-muted small">{{ slot.end_time|time:"H:i" }}</div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-3 d-block">
+                            <i class="fas fa-calendar-alt me-2"></i>Choose Date
+                        </label>
+                        <input type="date" id="booking-date" class="form-control form-control-lg rounded-4 shadow-sm" required>
+                    </div>
+
+                    <!-- Selected Slots Showcase -->
+                    <div class="selected-slots-section mb-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-list-check text-success me-2"></i>
+                            Selected Slots <span class="badge badge-success rounded-pill ms-2">{{ selectedSlots|length }}</span>
+                        </h6>
+                        <div id="selected-slots-list" class="selected-chips-container min-vh-80"></div>
+                    </div>
+
+                    <!-- Pricing Breakdown -->
+                    <div class="pricing-breakdown bg-light rounded-4 p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-semibold text-muted">Rate/Slot</span>
+                            <span class="fw-bold text-primary">₹500</span>
+                        </div>
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between align-items-center h5 fw-bold">
+                                <span>Total Amount</span>
+                                <span class="total-amount" id="total-amount">₹0</span>
                             </div>
                         </div>
-                        {% empty %}
-                        <div class="col-12 text-center py-5">
-                            <i class="fas fa-calendar-xmark fa-4x mb-3" style="color: var(--text-light); opacity: 0.5;"></i>
-                            <p class="lead text-muted">No slots available for this date</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slots Calendar/Grid -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card glass-card h-100">
+                <div class="card-header border-0 pb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-stopwatch text-warning me-2"></i>
+                            Time Slots Availability
+                        </h5>
+                        <div class="availability-legend small">
+                            <span class="legend-item">
+                                <span class="legend-dot available"></span> Available
+                            </span>
+                            <span class="legend-item ms-3">
+                                <span class="legend-dot selected"></span> Selected
+                            </span>
+                            <span class="legend-item ms-3">
+                                <span class="legend-dot unavailable"></span> Booked
+                            </span>
                         </div>
-                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="time-slots-grid-container p-4" id="slots-grid-container">
+                        <div class="row g-3 justify-content-center" id="slots-grid">
+                            {% for slot in slots %}
+                            <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6">
+                                <div class="slot-card slot-box position-relative overflow-hidden" 
+                                     data-slot-id="{{ slot.id }}"
+                                     data-price="500"
+                                     data-start="{{ slot.start_time|time:'H:i' }}"
+                                     data-end="{{ slot.end_time|time:'H:i' }}">
+                                    <div class="slot-time fw-bold mb-1">{{ slot.start_time|time:"H:i" }}</div>
+                                    <div class="slot-duration text-muted small">{{ slot.end_time|time:"H:i" }}</div>
+                                    <div class="slot-price text-primary fw-semibold mt-1">₹5000</div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-calendar-times fa-4x mb-4 text-muted"></i>
+                                <h5 class="text-muted">No slots for this date</h5>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
     </div>
-
-   
-
 </div>
 
 <!-- Hidden Form -->
@@ -139,69 +154,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set default date to today
     const todayStr = new Date().toISOString().split('T')[0];
     dateInput.min = todayStr;
-    if (!dateInput.value) dateInput.value = todayStr;
+    dateInput.value = todayStr;
 
     dateInput.addEventListener('change', loadBookedSlots);
-    loadBookedSlots(); // Initial load
+    loadBookedSlots();
 
-    // Slot Click Handler
-    document.querySelectorAll('.slot-box').forEach(slotEl => {
-        slotEl.addEventListener('click', () => {
-            const slotId = slotEl.dataset.slotId;
-            if (bookedSlots.has(slotId) || blockedEmptySlots.has(slotId)) return;
-
-            if (selectedSlots.includes(slotId)) {
-                selectedSlots = selectedSlots.filter(id => id !== slotId);
-                slotEl.classList.remove('slot-selected');
-            } else {
-                selectedSlots.push(slotId);
-                slotEl.classList.add('slot-selected');
-            }
-            updateUI();
-        });
-    });
-
-    // Proceed Payment
-    payBtn.addEventListener('click', () => {
-        if (selectedSlots.length === 0 || !dateInput.value) {
-            alert("Please select a date and at least one slot.");
-            return;
+    // Delegated slot click handler
+    document.addEventListener('click', (e) => {
+        const slotCard = e.target.closest('.slot-box');
+        if (!slotCard || slotCard.classList.contains('slot-unavailable')) return;
+        
+        const slotId = slotCard.dataset.slotId;
+        const index = selectedSlots.indexOf(slotId);
+        
+        if (index > -1) {
+            selectedSlots.splice(index, 1);
+            slotCard.classList.remove('slot-selected');
+        } else {
+            selectedSlots.push(slotId);
+            slotCard.classList.add('slot-selected');
         }
-
-        const formData = new FormData();
-        formData.append('date', dateInput.value);
-        formData.append('slots', selectedSlots.join(','));
-
-        fetch("{% url 'book' %}", {
-            method: 'POST',
-            body: formData,
-            headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const options = {
-                    key: data.key,
-                    amount: data.amount * 100,
-                    currency: 'INR',
-                    name: 'Cricket Booking',
-                    description: `Booking #${data.booking_id}`,
-                    order_id: data.order_id,
-                    handler: (response) => verifyPayment(data.order_id, response.razorpay_payment_id, response.razorpay_signature, data.booking_id),
-                    prefill: { name: '{{ user.get_full_name|default:user.username }}' },
-                    theme: { color: '#6366f1' }
-                };
-                new Razorpay(options).open();
-            } else {
-                alert(data.error || 'Failed to create order');
-            }
-        })
-        .catch(() => alert('Network error. Please try again.'));
+        
+        updateUI();
     });
+
+    // Payment handler
+    payBtn.addEventListener('click', handlePayment);
 
     function loadBookedSlots() {
         const date = dateInput.value;
         if (!date) return;
+
+        // Show loading
+        document.getElementById('slots-grid-container').classList.add('loading');
 
         fetch(`/api/booked-slots/${date}/`)
             .then(res => res.json())
@@ -212,74 +197,122 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateUI();
             })
             .catch(() => {
-                bookedSlots = new Set();
-                blockedEmptySlots = new Set();
+                bookedSlots.clear();
+                blockedEmptySlots.clear();
                 refreshSlotUI();
                 updateUI();
+            })
+            .finally(() => {
+                document.getElementById('slots-grid-container').classList.remove('loading');
             });
     }
 
     function refreshSlotUI() {
         document.querySelectorAll('.slot-box').forEach(slotEl => {
             const slotId = slotEl.dataset.slotId;
-            const slotContainer = slotEl.closest('.col-6, .col-sm-4, .col-md-3, .col-lg-3');
+            const isUnavailable = bookedSlots.has(slotId) || blockedEmptySlots.has(slotId);
             
-            if (bookedSlots.has(slotId) || blockedEmptySlots.has(slotId)) {
-                // Hide booked and blocked slots completely
-                if (slotContainer) {
-                    slotContainer.style.display = 'none';
-                }
+            slotEl.classList.toggle('slot-unavailable', isUnavailable);
+            slotEl.classList.toggle('slot-available', !isUnavailable);
+            
+            if (isUnavailable) {
+                slotEl.style.pointerEvents = 'none';
+                slotEl.querySelector('.slot-price').style.opacity = '0.5';
+                slotEl.querySelector('.slot-price').textContent = 'Booked';
             } else {
-                // Show available slots
-                if (slotContainer) {
-                    slotContainer.style.display = '';
-                }
-                slotEl.classList.remove('slot-booked', 'slot-blocked');
                 slotEl.style.pointerEvents = 'auto';
-                slotEl.style.opacity = '1';
+                slotEl.querySelector('.slot-price').style.opacity = '1';
+                slotEl.querySelector('.slot-price').textContent = '₹500';
             }
         });
     }
 
     function updateUI() {
         const total = selectedSlots.length * 500;
+        const countText = selectedSlots.length === 1 ? 'slot' : 'slots';
 
-        totalPriceEl.textContent = `₹${total}`;
-        totalAmountEl.textContent = `₹${total}`;
-        slotCountEl.textContent = `(${selectedSlots.length} slots selected)`;
+        totalPriceEl.textContent = `₹${total.toLocaleString()}`;
+        totalAmountEl.textContent = `₹${total.toLocaleString()}`;
+        slotCountEl.textContent = `${selectedSlots.length} ${countText} selected`;
 
-        // Selected Slots Chips
+        // Update selected chips
         selectedListEl.innerHTML = '';
         selectedSlots.forEach(slotId => {
             const slotEl = document.querySelector(`.slot-box[data-slot-id="${slotId}"]`);
             if (slotEl) {
                 const chip = document.createElement('div');
-                chip.className = 'badge bg-primary px-3 py-2 d-flex align-items-center gap-2';
+                chip.className = 'chip selected-chip d-flex align-items-center justify-content-between p-3 rounded-4 shadow-sm';
                 chip.innerHTML = `
-                    ${slotEl.dataset.start} - ${slotEl.dataset.end}
-                    <i class="fas fa-times" style="cursor:pointer;" onclick="deselectSlot('${slotId}')"></i>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="chip-icon bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="fas fa-check fs-6"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">${slotEl.dataset.start}</div>
+                            <small class="text-muted">${slotEl.dataset.end}</small>
+                        </div>
+                    </div>
+                    <i class="fas fa-times text-muted cursor-pointer ms-2" onclick="deselectSlot('${slotId}')"></i>
                 `;
                 selectedListEl.appendChild(chip);
             }
         });
 
         payBtn.disabled = selectedSlots.length === 0;
+        payBtn.classList.toggle('btn-gradient-active', selectedSlots.length > 0);
     }
 
     window.deselectSlot = function(slotId) {
         selectedSlots = selectedSlots.filter(id => id !== slotId);
         const slotEl = document.querySelector(`.slot-box[data-slot-id="${slotId}"]`);
-        if (slotEl) {
-            slotEl.classList.remove('slot-selected');
-        }
+        if (slotEl) slotEl.classList.remove('slot-selected');
         updateUI();
     };
 
-    function verifyPayment(order_id, payment_id, signature, booking_id) {
+    async function handlePayment() {
+        if (selectedSlots.length === 0 || !dateInput.value) {
+            showToast('Please select date and slots', 'error');
+            return;
+        }
+
         const formData = new FormData();
-        formData.append('razorpay_order_id', order_id);
-        formData.append('razorpay_payment_id', payment_id);
-        formData.append('razorpay_signature', signature);
+        formData.append('date', dateInput.value);
+        formData.append('slots', selectedSlots.join(','));
+
+        try {
+            const response = await fetch("{% url 'book' %}", {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                const options = {
+                    key: data.key,
+                    amount: data.amount * 100,
+                    currency: 'INR',
+                    name: 'Cricket Booking Pro',
+                    description: `Premium Slots - #${data.booking_id}`,
+                    order_id: data.order_id,
+                    handler: verifyPayment,
+                    prefill: { name: '{{ user.get_full_name|default:user.username }}' },
+                    theme: { color: '#667eea' }
+                };
+                new Razorpay(options).open();
+            } else {
+                showToast(data.error || 'Booking failed', 'error');
+            }
+        } catch (error) {
+            showToast('Network error. Please try again.', 'error');
+        }
+    }
+
+    function verifyPayment(response) {
+        const formData = new FormData();
+        formData.append('razorpay_order_id', response.razorpay_order_id);
+        formData.append('razorpay_payment_id', response.razorpay_payment_id);
+        formData.append('razorpay_signature', response.razorpay_signature);
 
         fetch("{% url 'payment_success' %}", {
             method: 'POST',
@@ -289,13 +322,142 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                alert("🎉 Payment Successful! Your booking is confirmed.");
-                window.location.href = "{% url 'history' %}";
+                showToast('🎉 Booking Confirmed!', 'success');
+                setTimeout(() => window.location.href = "{% url 'history' %}", 1500);
             } else {
-                alert("Payment verification failed.");
+                showToast('Payment failed. Contact support.', 'error');
             }
         });
     }
+
+    function showToast(message, type = 'info') {
+        // Simple toast implementation
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type} position-fixed`;
+        toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        toast.innerHTML = `
+            <div class="toast-card p-3 rounded-4 shadow-lg">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                <strong>${type.toUpperCase()}</strong>: ${message}
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.remove(), 4000);
+    }
 });
 </script>
+<style>
+/* Professional Layout Overrides */
+.hero-section {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: var(--border-radius-lg);
+  padding: 4rem 0;
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sticky-price-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-xl);
+  position: sticky;
+  top: 100px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.time-slots-grid-container {
+  min-height: 500px;
+}
+
+.slot-card {
+  height: 140px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.slot-card.slot-selected {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-8px);
+}
+
+.slot-card.slot-unavailable {
+  background: linear-gradient(135deg, rgba(250, 112, 154, 0.2) 0%, rgba(254, 225, 64, 0.2) 100%);
+  border-color: var(--danger-gradient);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.available { background: #48bb78; }
+.legend-dot.selected { background: var(--primary); }
+.legend-dot.unavailable { background: #f56565; }
+
+.chip.selected-chip {
+  background: var(--success-gradient);
+  color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.chip-icon {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.btn-gradient {
+  background: var(--primary-gradient);
+  border: none;
+}
+
+.btn-gradient-active {
+  box-shadow: var(--shadow-xl);
+  transform: scale(1.02);
+}
+
+.min-vh-80 {
+  min-height: 80px;
+}
+
+.text-large {
+  font-size: 1.3rem;
+}
+
+@media (max-width: 991.98px) {
+  .sticky-price-card {
+    position: static;
+  }
+  
+  .hero-section {
+    text-align: center;
+  }
+}
+</style>
 {% endblock %}

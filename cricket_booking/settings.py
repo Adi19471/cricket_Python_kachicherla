@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-tk%!g-evj#*5w(e%%_y%_@98clw029)u$^(jjv8n&!+9)7ysew
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ["cricket-python-kachicherla-lapy.onrender.com"]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
