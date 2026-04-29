@@ -1,0 +1,233 @@
+/* Modern Django Admin - Box Cricket Pro 2026 */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Base */
+body.admin {
+  font-family: 'Inter', -apple-system, sans-serif !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+/* Header & Branding */
+#header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-bottom: none !important;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
+  height: 80px !important;
+}
+
+#header #branding {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 1.4rem !important;
+  color: white !important;
+}
+
+#header #branding h1 {
+  color: white !important;
+  font-size: 1.4rem !important;
+  margin: 0 !important;
+}
+
+#header .header|alinks {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+#header a:hover {
+  color: white !important;
+}
+
+/* Navigation */
+#user-tools {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+#user-tools a {
+  color: #4a5568 !important;
+  font-weight: 500 !important;
+}
+
+#user-tools a:hover {
+  color: #667eea !important;
+}
+
+/* Main Content */
+#content-main, #content-related {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Module Navigation */
+.module {
+  border-radius: 16px !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.module h2 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 16px 16px 0 0 !important;
+  margin: 0 !important;
+  padding: 1rem 1.5rem !important;
+  font-size: 1.1rem !important;
+}
+
+.module caption h2 {
+  background: transparent !important;
+  color: #4a5568 !important;
+  font-weight: 600 !important;
+}
+
+/* Tables */
+table {
+  background: white !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+}
+
+thead th {
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  color: #2d3748 !important;
+  padding: 1.25rem 1rem !important;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease !important;
+}
+
+tbody tr:hover {
+  background: #f7fafc !important;
+  transform: scale(1.01) !important;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(248, 250, 252, 0.5) !important;
+}
+
+td, th {
+  padding: 1.25rem 1rem !important;
+  vertical-align: middle !important;
+}
+
+/* Forms */
+.form-row {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1rem !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+fieldset {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Fieldsets */
+.fieldBox {
+  background: transparent !important;
+  border: none !important;
+}
+
+.inline-related {
+  background: white !important;
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+.inline-related h3 {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  border-radius: 16px 16px 0 0 !important;
+}
+
+/* Buttons */
+.default, .submit-row input, input[type="submit"] {
+  background: var(--primary-gradient) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+.default:hover, .submit-row input:hover, input[type="submit"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6) !important;
+}
+
+.addlink, .deletelink {
+  background: linear-gradient(135deg, #48bb78, #38a169) !important;
+  color: white !important;
+}
+
+.changelink, .viewlink {
+  background: linear-gradient(135deg, #4299e1, #3182ce) !important;
+  color: white !important;
+}
+
+/* Pagination */
+.pagination {
+  gap: 8px !important;
+}
+
+.step-links .current {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+/* Messages */
+.message {
+  border-radius: 16px !important;
+  border: none !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.errornote {
+  background: linear-gradient(135deg, #fed7d7, #feb2b2) !important;
+  color: #c53030 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #header {
+    height: 70px !important;
+  }
+  
+  .module {
+    margin-bottom: 1rem !important;
+  }
+  
+  table {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Cricket Branding */
+#branding::after {
+  content: '🏏 Box Cricket Pro';
+  font-size: 0.8rem;
+  opacity: 0.8;
+  display: block;
+  margin-top: 2px;
+}
+
