@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -46,23 +47,19 @@ def api_booked_slots(request, date_str):
     if not date:
         return JsonResponse({'error': 'Invalid date'}, status=400)
     
-    # Get all booked slots from paid bookings
     booked_qs = Booking.objects.filter(
         date=date, 
         is_paid=True
     ).values_list('slots__id', flat=True)
     booked_slots = list(set(booked_qs))
     
-    # Check if there's any completed booking on this date
     completed_booking_exists = Booking.objects.filter(
         date=date, 
         status='completed'
     ).exists()
     
-    # If a booking is completed, block all empty slots
     blocked_empty_slots = []
     if completed_booking_exists:
-        # Get all slots that are NOT in any completed booking
         completed_booking_slots = set(Booking.objects.filter(
             date=date,
             status='completed'
@@ -85,44 +82,41 @@ def book_slot(request):
         slot_ids = request.POST.get("slots", "").split(",")
         slot_ids = [sid for sid in slot_ids if sid.isdigit()]
         
-        # Check availability
-        booked_on_date = set(Booking.objects.filter(
-            date=date, is_paid=True
-        ).values_list('slots__id', flat=True))
+        if not slot_ids:
+            return JsonResponse({'error': 'No slots selected'}, status=400)
         
-        # Check if there's any completed booking on this date
-        completed_booking_exists = Booking.objects.filter(
-            date=date, 
-            status='completed'
-        ).exists()
-        
-        # If a booking is completed, block all empty slots
-        blocked_slots = set()
-        if completed_booking_exists:
-            completed_booking_slots = set(Booking.objects.filter(
+        available_slots = []
+        for slot_id in slot_ids:
+            existing_booking = Booking.objects.filter(
                 date=date,
-                status='completed'
-            ).values_list('slots__id', flat=True))
+                slots__id=slot_id,
+                is_paid=True
+            ).exists()
             
-            all_slots = set(TimeSlot.objects.values_list('id', flat=True))
-            blocked_slots = all_slots - completed_booking_slots
+            if not existing_booking:
+                available_slots.append(slot_id)
         
-        # Check if any requested slot is blocked or already booked
-        available_slots = [sid for sid in slot_ids if sid not in booked_on_date and sid not in blocked_slots]
         if len(available_slots) != len(slot_ids):
-            return JsonResponse({'error': 'Some slots already booked or blocked'}, status=400)
+            booked_count = len(slot_ids) - len(available_slots)
+            return JsonResponse({
+                'error': f'{booked_count} slot(s) already booked on this date. Please select different slots.'
+            }, status=400)
         
         total_amount = len(available_slots) * 500
         
-        booking = Booking.objects.create(
+        booking = Booking(
             user=request.user,
             date=date,
             amount=500,
             total_amount=total_amount
         )
-        for slot_id in available_slots:
-            booking.slots.add(slot_id)
-        booking.save()
+        
+        try:
+            booking.save()
+            for slot_id in available_slots:
+                booking.slots.add(slot_id)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
         
         order = client.order.create({
             'amount': int(total_amount * 100),
@@ -159,7 +153,7 @@ def payment_success(request):
                 'razorpay_signature': signature
             })
             booking.is_paid = True
-            booking.mark_as_completed()  # Mark booking as completed
+            booking.mark_as_completed()
             return JsonResponse({'success': True})
         except Exception:
             return JsonResponse({'success': False, 'error': 'Verification failed'})
@@ -180,7 +174,6 @@ def history(request):
     today = timezone.now().date()
     return render(request, "history.html", {"bookings": bookings, "search_date": search_date_str, "today": today})
 
-
 @login_required
 def login_view(request):
     from django.contrib.auth import login as auth_login
@@ -197,10 +190,18 @@ def login_view(request):
         if user:
             auth_login(request, user)
             if remember:
-                request.session.set_expiry(1209600)  # 2 weeks
+                request.session.set_expiry(1209600)
             return redirect('home')
         else:
-            # Handle error in template
             return render(request, 'login.html', {'error': 'Invalid credentials'})
     
     return render(request, 'login.html')
+
+@login_required
+def booking_detail(request, booking_id):
+    try:
+        booking = Booking.objects.get(id=booking_id, user=request.user)
+        return render(request, 'booking_detail.html', {'booking': booking})
+    except Booking.DoesNotExist:
+        from django.shortcuts import render
+        return render(request, 'error.html', {'error': 'Booking not found'}, status=404)

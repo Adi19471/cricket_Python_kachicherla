@@ -9,7 +9,7 @@
         <div class="flex-1">
             <h3 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
                 <i class="fas fa-cricket-bat-ball text-primary mr-3"></i>
-                Book Premium Cricket Slots
+                Book Cricket Slots
             </h3>
             <p class="text-lg text-gray-400">
                 Choose your perfect time slot with real-time availability. 
@@ -225,25 +225,82 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    function refreshSlotUI() {
+function refreshSlotUI() {
         document.querySelectorAll('.slot-box').forEach(slotEl => {
             const slotId = slotEl.dataset.slotId;
+            const priceEl = slotEl.querySelector('.text-green-400') || slotEl.querySelector('.text-primary') || slotEl.querySelector('.text-red-500');
             const isUnavailable = bookedSlots.has(slotId) || blockedEmptySlots.has(slotId);
             
             if (isUnavailable) {
-                slotEl.classList.add('slot-unavailable', 'opacity-50', 'cursor-not-allowed');
+                // Make booked slots clearly RED (unavailable)
+                slotEl.classList.add('slot-unavailable', 'cursor-not-allowed');
                 slotEl.classList.remove('cursor-pointer', 'hover:border-primary', 'hover:scale-105');
                 slotEl.style.pointerEvents = 'none';
-                slotEl.querySelector('.text-primary').textContent = 'Booked';
-                slotEl.querySelector('.text-primary').classList.remove('text-primary');
-                slotEl.querySelector('.text-primary').classList.add('text-red-500');
+                // Strong RED background color
+                slotEl.style.background = 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)';
+                slotEl.style.borderColor = '#ef4444';
+                slotEl.style.borderStyle = 'solid';
+                slotEl.style.borderWidth = '2px';
+                
+                // Update text to show "BOOKED" in white
+                if (priceEl) {
+                    priceEl.textContent = 'BOOKED';
+                    priceEl.classList.remove('text-green-400', 'text-primary');
+                    priceEl.classList.add('text-white', 'font-bold');
+                }
+                
+                // Change time text to white
+                const timeEl = slotEl.querySelector('.font-bold');
+                if (timeEl) {
+                    timeEl.classList.remove('text-white');
+                    timeEl.classList.add('text-white');
+                }
+                const endTimeEl = slotEl.querySelector('.text-gray-500');
+                if (endTimeEl) {
+                    endTimeEl.classList.remove('text-gray-500');
+                    endTimeEl.classList.add('text-gray-200');
+                }
+                
+                // Add X icon to show unavailable
+                let crossIcon = slotEl.querySelector('.cross-icon');
+                if (!crossIcon) {
+                    crossIcon = document.createElement('div');
+                    crossIcon.className = 'cross-icon absolute top-1 right-1 text-white text-xl font-bold';
+                    crossIcon.innerHTML = '✕';
+                    slotEl.style.position = 'relative';
+                    slotEl.appendChild(crossIcon);
+                }
             } else {
-                slotEl.classList.remove('slot-unavailable', 'opacity-50', 'cursor-not-allowed');
+                // Reset to available state - GREEN
+                slotEl.classList.remove('slot-unavailable', 'cursor-not-allowed');
                 slotEl.classList.add('cursor-pointer', 'hover:border-primary', 'hover:scale-105');
                 slotEl.style.pointerEvents = 'auto';
-                slotEl.querySelector('.text-red-500').textContent = '₹500';
-                slotEl.querySelector('.text-red-500').classList.remove('text-red-500');
-                slotEl.querySelector('.text-red-500').classList.add('text-primary');
+                slotEl.style.background = '';
+                slotEl.style.borderColor = '';
+                slotEl.style.borderStyle = '';
+                slotEl.style.borderWidth = '';
+                
+                // Reset price text to green
+                if (priceEl) {
+                    priceEl.textContent = '₹500';
+                    priceEl.classList.remove('text-white', 'font-bold');
+                    priceEl.classList.add('text-green-400');
+                }
+                
+                // Reset time text colors
+                const timeEl = slotEl.querySelector('.font-bold');
+                if (timeEl) {
+                    timeEl.classList.add('text-white');
+                }
+                const endTimeEl = slotEl.querySelector('.text-gray-200');
+                if (endTimeEl) {
+                    endTimeEl.classList.remove('text-gray-200');
+                    endTimeEl.classList.add('text-gray-500');
+                }
+                
+                // Remove cross icon
+                const crossIcon = slotEl.querySelector('.cross-icon');
+                if (crossIcon) crossIcon.remove();
             }
         });
     }

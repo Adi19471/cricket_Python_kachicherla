@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Details - Cricket Booking{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Back Link -->
+        <a href="{% url 'history' %}" class="inline-flex items-center text-primary hover:text-green-400 mb-6 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to History
+        </a>
+
+        <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="p-6 bg-gradient-to-r from-primary to-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Booking #{{ booking.id }}</h2>
+                        <p class="text-gray-800 mt-1">
+                            <i class="fas fa-calendar mr-2"></i>
+                            {{ booking.date|date:"d M Y" }}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-4 py-2 rounded-full text-sm font-bold 
+                            {% if booking.status == 'completed' %}bg-green-500 text-white
+                            {% elif booking.status == 'pending' %}bg-yellow-500 text-gray-900
+                            {% else %}bg-red-500 text-white{% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Details -->
+            <div class="p-6">
+                <!-- User Info -->
+                <div class="mb-6">
+                    <h5 class="text-lg font-bold text-white mb-4">
+                        <i class="fas fa-user text-primary mr-2"></i>User Information
+                    </h5>
+                    <div class="p-4 rounded-xl bg-gray-900 border border-gray-700">
+                        <div class="flex items-center justify-between py-2">
+                            <span class="text-gray-400">Name</span>
+                            <strong class="text-white">{{ booking.user.get_full_name|default:booking.user.username }}</strong>
+                        </div>
+                        <hr class="border-gray-700 my-2">
+                        <div class="flex items-center justify-between py-2">
+                            <span class="text-gray-400">Email</span>
+                            <span class="text-white">{{ booking.user.email }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Slots -->
+                <div class="mb-6">
+                    <h5 class="text-lg font-bold text-white mb-4">
+                        <i class="fas fa-clock text-primary mr-2"></i>Time Slots
+                    </h5>
+                    <div class="p-4 rounded-xl bg-gray-900 border border-gray-700">
+                        <div class="grid grid-cols-2 gap-3">
+                            {% for slot in booking.slots.all %}
+                            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-800 border border-gray-600">
+                                <div class="font-bold text-white">{{ slot.start_time|time:"H:i" }}</div>
+                                <div class="text-gray-400">-</div>
+                                <div class="text-white">{{ slot.end_time|time:"H:i" }}</div>
+                            </div>
+                            {% empty %}
+                            <p class="text-gray-400">No slots selected</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="mb-6">
+                    <h5 class="text-lg font-bold text-white mb-4">
+                        <i class="fas fa-credit-card text-primary mr-2"></i>Payment Summary
+                    </h5>
+                    <div class="p-4 rounded-xl bg-gray-900 border border-gray-700">
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-400">Rate per slot</span>
+                            <span class="text-white">₹{{ booking.amount }}</span>
+                        </div>
+                        <hr class="border-gray-700 my-2">
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-400">Number of slots</span>
+                            <span class="text-white">{{ booking.slots.count }}</span>
+                        </div>
+                        <hr class="border-gray-700 my-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg text-white">Total Amount</span>
+                            <span class="text-2xl font-bold text-primary">₹{{ booking.total_amount }}</span>
+                        </div>
+                        <hr class="border-gray-700 my-2">
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-400">Payment Status</span>
+                            <span class="{% if booking.is_paid %}text-green-400{% else %}text-yellow-400{% endif %} font-bold">
+                                {% if booking.is_paid %}<i class="fas fa-check-circle mr-1"></i> Paid{% else %}<i class="fas fa-clock mr-1"></i> Pending{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Info -->
+                <div>
+                    <h5 class="text-lg font-bold text-white mb-4">
+                        <i class="fas fa-info-circle text-primary mr-2"></i>Order Information
+                    </h5>
+                    <div class="p-4 rounded-xl bg-gray-900 border border-gray-700">
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-400">Order ID</span>
+                            <span class="text-white text-sm">{{ booking.razorpay_order_id|default:"N/A" }}</span>
+                        </div>
+                        <hr class="border-gray-700 my-2">
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-400">Created At</span>
+                            <span class="text-white">{{ booking.created_at|date:"d M Y, H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
