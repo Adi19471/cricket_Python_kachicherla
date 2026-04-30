@@ -26,6 +26,31 @@ body {
 }
 
 /* =========================
+   Date Picker Visibility Fix
+========================= */
+/* Style the date input for better visibility */
+input[type="date"] {
+    background-color: #ffffff !important;
+    color: #1f2937 !important;
+    border: 2px solid #22c55e !important;
+    cursor: pointer;
+}
+
+/* Focus state */
+input[type="date"]:focus {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2) !important;
+    outline: none;
+}
+
+/* Style the calendar picker icon/button - for WebKit browsers (Chrome, Safari, Edge) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    padding: 4px;
+}
+
+/* =========================
    Slot Grid (for index.html)
 ========================= */
 .slot-grid {

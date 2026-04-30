@@ -40,11 +40,14 @@
                 </h5>
             </div>
             <div class="p-5">
-                <div class="mb-5">
+<div class="mb-5">
                     <label class="block font-semibold text-gray-300 mb-3">
-                        <i class="fas fa-calendar-alt mr-2"></i> Choose Date
+                        <i class="fas fa-calendar-alt text-white mr-2"></i> Choose Date
                     </label>
-                    <input type="date" id="booking-date" class="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-primary transition-all" required>
+                    <div class="relative">
+                        <input type="date" id="booking-date" class="w-full px-4 py-3 pl-12 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:border-primary transition-all" required>
+                        <i class="fas fa-calendar-alt absolute left-4 top-1/2 transform -translate-y-1/2 text-white"></i>
+                    </div>
                 </div>
 
                 <!-- Selected Slots Showcase -->
@@ -96,16 +99,16 @@
                 </div>
             </div>
             <div class="p-4">
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-3" id="slots-grid">
+<div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3" id="slots-grid">
                     {% for slot in slots %}
-                    <div class="slot-box cursor-pointer rounded-xl p-4 border-2 border-gray-700 bg-gray-900 hover:border-primary hover:scale-105 transition-all text-center"
+                    <div class="slot-box cursor-pointer rounded-lg sm:rounded-xl p-2 sm:p-3 border-2 border-gray-700 bg-gray-900 hover:border-primary hover:scale-105 transition-all text-center"
                          data-slot-id="{{ slot.id }}"
                          data-price="500"
                          data-start="{{ slot.start_time|time:'H:i' }}"
                          data-end="{{ slot.end_time|time:'H:i' }}">
                         <div class="font-bold text-white mb-1">{{ slot.start_time|time:"H:i" }}</div>
                         <div class="text-gray-500 text-sm mb-1">{{ slot.end_time|time:"H:i" }}</div>
-                        <div class="text-primary font-semibold text-sm">₹500</div>
+<div class="text-green-400 font-semibold text-xs sm:text-sm">₹500</div>
                     </div>
                     {% empty %}
                     <div class="col-span-full text-center py-12">
@@ -150,23 +153,46 @@ document.addEventListener('DOMContentLoaded', () => {
     dateInput.addEventListener('change', loadBookedSlots);
     loadBookedSlots();
 
-    // Delegated slot click handler
+// Delegated slot click handler
     document.addEventListener('click', (e) => {
         const slotCard = e.target.closest('.slot-box');
         if (!slotCard || slotCard.classList.contains('slot-unavailable')) return;
         
         const slotId = slotCard.dataset.slotId;
+        const slotIdNum = parseInt(slotId);
         const index = selectedSlots.indexOf(slotId);
         
         if (index > -1) {
+            // Deselect - remove this slot
             selectedSlots.splice(index, 1);
             slotCard.classList.remove('border-primary', 'bg-primary', 'text-white');
             slotCard.classList.add('border-gray-700', 'bg-gray-900');
-        } else {
-            selectedSlots.push(slotId);
-            slotCard.classList.add('border-primary', 'bg-primary', 'text-white');
-            slotCard.classList.remove('border-gray-700', 'bg-gray-900');
+            updateUI();
+            return;
         }
+        
+        // Check if already at max 6 slots
+        if (selectedSlots.length >= 6) {
+            showToast('Maximum 6 slots allowed per booking', 'error');
+            return;
+        }
+        
+        // Check sequential order - must be adjacent to last selected slot
+        if (selectedSlots.length > 0) {
+            const lastSelectedId = parseInt(selectedSlots[selectedSlots.length - 1]);
+            const diff = Math.abs(slotIdNum - lastSelectedId);
+            
+            // Must be exactly 1 slot apart (adjacent)
+            if (diff !== 1) {
+                showToast('Select slots in order (consecutive)', 'error');
+                return;
+            }
+        }
+        
+        // Add slot in order
+        selectedSlots.push(slotId);
+        slotCard.classList.add('border-primary', 'bg-primary', 'text-white');
+        slotCard.classList.remove('border-gray-700', 'bg-gray-900');
         
         updateUI();
     });
@@ -293,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             
-            if (data.success) {
+if (data.success) {
                 const options = {
                     key: data.key,
                     amount: data.amount * 100,
@@ -302,10 +328,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: `Premium Slots - #${data.booking_id}`,
                     order_id: data.order_id,
                     handler: verifyPayment,
-                    prefill: { name: '{{ user.get_full_name|default:user.username }}' },
-                    theme: { color: '#22c55e' }
+                    prefill: { 
+                        name: '{{ user.get_full_name|default:user.username }}',
+                        email: '{{ user.email|default:"" }}'
+                    },
+                    theme: { color: '#22c55e' },
+                    modal: {
+                        ondismiss: function() {
+                            // If user closes modal without paying, show message
+                            console.log('Payment modal dismissed');
+                        }
+                    }
                 };
-                new Razorpay(options).open();
+                const rzp = new Razorpay(options);
+                rzp.open();
             } else {
                 showToast(data.error || 'Booking failed', 'error');
             }
@@ -314,11 +350,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function verifyPayment(response) {
+function verifyPayment(response) {
+        console.log('Payment response received:', response);
+        
+        // Close Razorpay modal explicitly
+        if (window.Razorpay) {
+            const rzpObj = document.querySelector('.razorpay-overlay');
+            if (rzpObj) {
+                rzpObj.remove();
+            }
+        }
+        
         const formData = new FormData();
         formData.append('razorpay_order_id', response.razorpay_order_id);
         formData.append('razorpay_payment_id', response.razorpay_payment_id);
         formData.append('razorpay_signature', response.razorpay_signature);
+
+        // Show loading state
+        showToast('Verifying payment...', 'info');
 
         fetch("{% url 'payment_success' %}", {
             method: 'POST',
@@ -327,12 +376,17 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(res => res.json())
         .then(data => {
+            console.log('Payment verification response:', data);
             if (data.success) {
                 showToast('🎉 Booking Confirmed!', 'success');
                 setTimeout(() => window.location.href = "{% url 'history' %}", 1500);
             } else {
-                showToast('Payment failed. Contact support.', 'error');
+                showToast(data.error || 'Payment failed. Contact support.', 'error');
             }
+        })
+        .catch(error => {
+            console.error('Payment verification error:', error);
+            showToast('Payment verification failed. Contact support.', 'error');
         });
     }
 

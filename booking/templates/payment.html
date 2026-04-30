@@ -108,15 +108,17 @@
 {% block extra_js %}
 <script>
 // Razorpay Options
-const options = {
-    "key": "{{ key }}",
-    "amount": {{ booking.total_amount|floatformat:0 }} * 100,
-    "currency": "INR",
-    "name": "Cricket Booking",
-    "description": "Turf Booking - {{ booking.date|date:'d M Y' }}",
-    "order_id": "{{ order_id }}",
-    "handler": function (response) {
-        const formData = new FormData();
+var options = {
+    key: "{{ key }}",
+    amount: {{ booking.total_amount|floatformat:0 }} * 100,
+    currency: "INR",
+    name: "Cricket Booking",
+    description: "Turf Booking - {{ booking.date|date:'d M Y' }}",
+    order_id: "{{ order_id }}",
+    handler: function (response) {
+        console.log('Payment response received:', response);
+        
+        var formData = new FormData();
         formData.append('razorpay_order_id', response.razorpay_order_id);
         formData.append('razorpay_payment_id', response.razorpay_payment_id);
         formData.append('razorpay_signature', response.razorpay_signature);
@@ -129,32 +131,36 @@ const options = {
                 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
             }
         })
-        .then(res => res.json())
-        .then(data => {
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            console.log('Payment verification response:', data);
             if (data.success) {
-                alert("🎉 Payment Successful! Booking Confirmed.");
+                alert("Payment Successful! Booking Confirmed.");
                 window.location.href = "{% url 'history' %}";
             } else {
-                alert("Payment verification failed. Please contact support.");
+                alert(data.error || "Payment verification failed. Please contact support.");
             }
         })
-        .catch(() => alert("Something went wrong."));
+        .catch(function(error) {
+            console.error('Payment verification error:', error);
+            alert("Something went wrong. Please contact support.");
+        });
     },
-    "prefill": {
-        "name": "{{ user.get_full_name|default:user.username }}",
-        "email": "{{ user.email }}"
+    prefill: {
+        name: "{{ user.get_full_name|default:user.username }}",
+        email: "{{ user.email }}"
     },
-    "theme": {
-        "color": "#22c55e"
+    theme: {
+        color: "#22c55e"
     },
-    "modal": {
-        "ondismiss": function() {
+    modal: {
+        ondismiss: function() {
             console.log("Payment modal closed");
         }
     }
 };
 
-const rzp = new Razorpay(options);
+var rzp = new Razorpay(options);
 
 document.getElementById('rzp-button').addEventListener('click', function(e) {
     e.preventDefault();
