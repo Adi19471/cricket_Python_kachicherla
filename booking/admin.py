@@ -3,6 +3,11 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from .models import TimeSlot, Booking, UserProfile
 
+
+admin.site.site_header = "CRICKET BOOKING"
+admin.site.site_title = "Cricket Admin"
+admin.site.index_title = "Welcome to Cricket Booking Dashboard 7801019106/9704723840"
+
 @admin.register(TimeSlot)
 class TimeSlotAdmin(admin.ModelAdmin):
     list_display = ('start_time', 'end_time')
