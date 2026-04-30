@@ -2,111 +2,102 @@
 
 {% load static %}
 
-{% block title %}Complete Payment - Black Box Cricket{% endblock %}
+{% block title %}Complete Payment - Cricket Booking{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-7 col-xl-6">
+<div class="py-8">
+    <div class="flex justify-center">
+        <div class="w-full max-w-lg">
 
-            <div class="card shadow-lg border-0 overflow-hidden" style="background: rgba(26, 26, 26, 0.98);">
+            <div class="bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
                 
                 <!-- Header -->
-                <div class="card-header bg-gradient py-5 text-center border-0" 
-                     style="background: linear-gradient(135deg, #00f5ff, #00b8cc);">
-                    <i class="fas fa-shield-alt fa-4x text-dark mb-3"></i>
-                    <h2 class="fw-bold text-dark mb-1">Secure Payment</h2>
-                    <p class="text-dark mb-0">Complete your cricket turf booking</p>
+                <div class="py-8 px-6 text-center bg-gradient-to-r from-cyan-400 to-blue-500">
+                    <i class="fas fa-shield-alt text-4xl text-gray-900 mb-3"></i>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Secure Payment</h2>
+                    <p class="text-gray-800">Complete your cricket turf booking</p>
                 </div>
 
-                <div class="card-body p-5">
-
+                <div class="p-6">
                     <!-- Booking Summary -->
-                    <div class="mb-5">
-                        <h5 class="fw-bold mb-4">
-                            <i class="fas fa-calendar-check text-primary me-2"></i>Booking Summary
+                    <div class="mb-6">
+                        <h5 class="text-lg font-bold text-white mb-4">
+                            <i class="fas fa-calendar-check text-primary mr-2"></i>Booking Summary
                         </h5>
                         
-                        <div class="bg-dark rounded-4 p-4 border border-secondary">
-                            <div class="d-flex justify-content-between py-2">
-                                <span class="text-muted">Date</span>
-                                <strong id="payment-date">{{ booking.date|date:"d M Y" }}</strong>
+                        <div class="p-4 rounded-xl bg-gray-900 border border-gray-700">
+                            <div class="flex justify-between py-2">
+                                <span class="text-gray-400">Date</span>
+                                <strong class="text-white" id="payment-date">{{ booking.date|date:"d M Y" }}</strong>
                             </div>
-                            <hr class="border-secondary my-2">
-                            <div class="d-flex justify-content-between py-2">
-                                <span class="text-muted">Time Slots</span>
-                                <strong id="payment-slots">{{ booking.slots.count }} slots</strong>
+                            <hr class="border-gray-700 my-2">
+                            <div class="flex justify-between py-2">
+                                <span class="text-gray-400">Time Slots</span>
+                                <strong class="text-white" id="payment-slots">{{ booking.slots.count }} slots</strong>
                             </div>
-                            <hr class="border-secondary my-2">
-                            <div class="d-flex justify-content-between py-2">
-                                <span class="text-muted">Amount per slot</span>
+                            <hr class="border-gray-700 my-2">
+                            <div class="flex justify-between py-2">
+                                <span class="text-gray-400">Amount per slot</span>
                                 <span>₹500</span>
                             </div>
-                            <hr class="border-secondary my-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold fs-5">Total Amount</span>
-                                <span class="total-price fs-2 fw-bold">₹{{ booking.total_amount }}</span>
+                            <hr class="border-gray-700 my-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-lg text-white">Total Amount</span>
+                                <span class="text-3xl font-bold text-primary">₹{{ booking.total_amount }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Payment Details -->
-                    <div class="mb-5">
-                        <h5 class="fw-bold mb-4">
-                            <i class="fas fa-credit-card text-primary me-2"></i>Payment Details
+                    <div class="mb-6">
+                        <h5 class="text-lg font-bold text-white mb-4">
+                            <i class="fas fa-credit-card text-primary mr-2"></i>Payment Details
                         </h5>
                         
-                        <div class="row g-3 text-center">
-                            <div class="col-6 col-sm-3">
-                                <div class="payment-method-card p-3 rounded-4 border border-secondary">
-                                    <i class="fab fa-cc-visa fa-2x mb-2 text-primary"></i>
-                                    <small>Cards</small>
-                                </div>
+                        <div class="grid grid-cols-4 gap-3 text-center">
+                            <div class="p-3 rounded-xl border border-gray-700 hover:border-primary cursor-pointer transition-colors">
+                                <i class="fab fa-cc-visa text-2xl text-blue-400 mb-1"></i>
+                                <small class="text-gray-500 text-xs">Cards</small>
                             </div>
-                            <div class="col-6 col-sm-3">
-                                <div class="payment-method-card p-3 rounded-4 border border-secondary">
-                                    <i class="fab fa-google-pay fa-2x mb-2 text-primary"></i>
-                                    <small>UPI</small>
-                                </div>
+                            <div class="p-3 rounded-xl border border-gray-700 hover:border-primary cursor-pointer transition-colors">
+                                <i class="fab fa-google-pay text-2xl text-blue-400 mb-1"></i>
+                                <small class="text-gray-500 text-xs">UPI</small>
                             </div>
-                            <div class="col-6 col-sm-3">
-                                <div class="payment-method-card p-3 rounded-4 border border-secondary">
-                                    <i class="fab fa-cc-mastercard fa-2x mb-2 text-primary"></i>
-                                    <small>Mastercard</small>
-                                </div>
+                            <div class="p-3 rounded-xl border border-gray-700 hover:border-primary cursor-pointer transition-colors">
+                                <i class="fab fa-cc-mastercard text-2xl text-red-400 mb-1"></i>
+                                <small class="text-gray-500 text-xs">Cards</small>
                             </div>
-                            <div class="col-6 col-sm-3">
-                                <div class="payment-method-card p-3 rounded-4 border border-secondary">
-                                    <i class="fas fa-wallet fa-2x mb-2 text-primary"></i>
-                                    <small>Wallets</small>
-                                </div>
+                            <div class="p-3 rounded-xl border border-gray-700 hover:border-primary cursor-pointer transition-colors">
+                                <i class="fas fa-wallet text-2xl text-purple-400 mb-1"></i>
+                                <small class="text-gray-500 text-xs">Wallets</small>
                             </div>
                         </div>
                     </div>
 
                     <!-- Secure Payment Button -->
-                    <div class="text-center mt-4">
+                    <div class="text-center mt-5">
                         <button id="rzp-button" 
-                                class="btn btn-primary btn-lg w-100 py-4 fs-4 rounded-pill shadow-sm fw-semibold">
-                            <i class="fas fa-lock me-3"></i>
+                                class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-xl font-semibold shadow-lg transition-all">
+                            <i class="fas fa-lock mr-3"></i>
                             Pay Securely ₹{{ booking.total_amount }}
                         </button>
                         <div class="mt-3">
-                            <small class="text-muted">
-                                <i class="fas fa-shield-alt me-1"></i>
-                                Secured by Razorpay • 256-bit SSL Encryption
+                            <small class="text-gray-500">
+                                <i class="fas fa-shield-alt mr-1"></i>
+                                Secured by Razorpay • 256-bit SSL
                             </small>
                         </div>
                     </div>
 
                 </div>
-            </div>
 
-            <!-- Trust Badges -->
-            <div class="text-center mt-4">
-                <small class="text-muted">
-                    Your payment information is safe and encrypted
-                </small>
+                <!-- Trust Badges -->
+                <div class="text-center py-4 border-t border-gray-700">
+                    <small class="text-gray-500">
+                        Your payment information is safe and encrypted
+                    </small>
+                </div>
+
             </div>
 
         </div>
@@ -121,7 +112,7 @@ const options = {
     "key": "{{ key }}",
     "amount": {{ booking.total_amount|floatformat:0 }} * 100,
     "currency": "INR",
-    "name": "Black Box Cricket",
+    "name": "Cricket Booking",
     "description": "Turf Booking - {{ booking.date|date:'d M Y' }}",
     "order_id": "{{ order_id }}",
     "handler": function (response) {
@@ -154,7 +145,7 @@ const options = {
         "email": "{{ user.email }}"
     },
     "theme": {
-        "color": "#00f5ff"
+        "color": "#22c55e"
     },
     "modal": {
         "ondismiss": function() {

@@ -3,95 +3,94 @@
 {% block title %}My Bookings - Cricket Booking{% endblock %}
 
 {% block content %}
-<div class="py-3">
+<div class="py-4">
     
     <!-- Header -->
-    <div class="row align-items-center mb-5">
-        <div class="col-md-6">
-            <h1 class="fw-bold mb-2" style="font-size: 2.5rem;">
-                <i class="fas fa-history me-2" style="color: var(--primary);"></i> My Bookings
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2">
+                <i class="fas fa-history mr-3 text-primary"></i> My Bookings
             </h1>
-            <p class="text-muted mb-0">Track all your cricket slot bookings</p>
+            <p class="text-gray-400">Track all your cricket slot bookings</p>
         </div>
         
         <!-- Date Filter -->
-        <div class="col-md-6 mt-3 mt-md-0">
-            <div class="d-flex align-items-center gap-2 justify-content-md-end">
-                <label class="text-muted fw-medium">Filter by Date:</label>
-                <div class="input-group" style="max-width: 200px;">
-                    <input type="date" id="search-date" class="form-control" value="{{ search_date|default:today }}">
-                    <button class="btn btn-primary" onclick="filterBookings()">
-                        <i class="fas fa-filter"></i>
-                    </button>
-                </div>
+        <div class="flex items-center gap-3">
+            <label class="text-gray-400 font-medium text-sm">Filter by Date:</label>
+            <div class="flex">
+                <input type="date" id="search-date" class="px-4 py-2 rounded-l-xl bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary" value="{{ search_date|default:today }}">
+                <button class="px-4 py-2 rounded-r-xl bg-primary hover:bg-primary-dark text-white font-medium transition-colors" onclick="filterBookings()">
+                    <i class="fas fa-filter"></i>
+                </button>
             </div>
         </div>
     </div>
 
     {% if bookings %}
-        <div class="row g-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {% for booking in bookings %}
-            <div class="col-lg-6 col-xl-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-<span class="badge badge-status bg-gradient text-white" style="font-size: 0.9rem; background: var(--primary-gradient);">
-                                <i class="fas fa-calendar-alt me-2"></i>
-                                {{ booking.date|date:"D, d M Y" }}
+            <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden hover:border-primary/50 transition-colors">
+                <!-- Card Header -->
+                <div class="flex items-center justify-between p-5 border-b border-gray-700">
+                    <div>
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-semibold">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            {{ booking.date|date:"D, d M Y" }}
+                        </span>
+                    </div>
+                    <span class="text-xl lg:text-2xl font-bold text-green-400">₹{{ booking.total_amount }}</span>
+                </div>
+                
+                <!-- Card Body -->
+                <div class="p-5">
+                    <!-- Time Slots -->
+                    <div class="mb-4">
+                        <small class="text-gray-500 font-semibold block mb-3">
+                            <i class="fas fa-clock mr-2"></i> BOOKED SLOTS
+                        </small>
+                        <div class="flex flex-wrap gap-2">
+                            {% for slot in booking.slots.all %}
+                            <span class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm">
+                                {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
                             </span>
+                            {% endfor %}
                         </div>
-                        <span class="fw-bold" style="font-size: 1.3rem; color: var(--secondary);">₹{{ booking.total_amount }}</span>
                     </div>
-                    
-                    <div class="card-body">
-                        <!-- Time Slots -->
-                        <div class="mb-4">
-                            <small class="text-muted d-block mb-3 fw-bold">
-                                <i class="fas fa-clock me-2"></i> BOOKED SLOTS
-                            </small>
-                            <div class="d-flex flex-wrap gap-2">
-                                {% for slot in booking.slots.all %}
-                                <div class="badge" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); font-size: 0.9rem; padding: 8px 12px;">
-                                    {{ slot.start_time|time:"H:i" }} - {{ slot.end_time|time:"H:i" }}
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
 
-                        <!-- Booking Details -->
-                        <div class="border-top pt-4">
-                            <div class="row text-sm">
-                                <div class="col-6 mb-3">
-                                    <small class="text-muted fw-bold">Status</small><br>
-                                    {% if booking.is_paid %}
-                                        <span class="badge" style="background: #d1fae5; color: #065f46; font-size: 0.85rem; padding: 6px 10px;">
-                                            <i class="fas fa-check-circle me-1"></i> Paid
-                                        </span>
-                                    {% else %}
-                                        <span class="badge" style="background: #fef3c7; color: #92400e; font-size: 0.85rem; padding: 6px 10px;">
-                                            <i class="fas fa-clock me-1"></i> Pending
-                                        </span>
-                                    {% endif %}
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <small class="text-muted fw-bold">Booking Status</small><br>
-                                    <span class="badge" style="background: #ede9fe; color: #4c1d95; font-size: 0.85rem; padding: 6px 10px;">
-                                        {{ booking.get_status_display }}
+                    <!-- Booking Details -->
+                    <div class="border-t border-gray-700 pt-4">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <small class="text-gray-500 font-semibold block">Status</small>
+                                {% if booking.is_paid %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md bg-green-500/20 text-green-400 text-xs font-medium">
+                                        <i class="fas fa-check-circle mr-1"></i> Paid
                                     </span>
-                                </div>
-                                <div class="col-12">
-                                    <small class="text-muted fw-bold">Booked On</small><br>
-                                    <small class="text-muted">{{ booking.created_at|date:"d M Y • h:i A" }}</small>
-                                </div>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md bg-yellow-500/20 text-yellow-400 text-xs font-medium">
+                                        <i class="fas fa-clock mr-1"></i> Pending
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <small class="text-gray-500 font-semibold block">Booking Status</small>
+                                <span class="inline-flex items-center px-2 py-1 rounded-md bg-purple-500/20 text-purple-400 text-xs font-medium">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </div>
+                            <div class="col-span-2">
+                                <small class="text-gray-500 font-semibold block">Booked On</small>
+                                <small class="text-gray-400">{{ booking.created_at|date:"d M Y • h:i A" }}</small>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="card-footer py-3">
-                        <a href="{% url 'home' %}" class="btn btn-primary w-100 btn-sm">
-                            <i class="fas fa-plus me-2"></i> Book Another Slot
-                        </a>
-                    </div>
+                <!-- Card Footer -->
+                <div class="p-4 border-t border-gray-700">
+                    <a href="{% url 'home' %}" class="block w-full py-2.5 rounded-xl bg-gray-700 hover:bg-primary text-white text-center font-semibold transition-colors">
+                        <i class="fas fa-plus mr-2"></i> Book Another Slot
+                    </a>
                 </div>
             </div>
             {% endfor %}
@@ -99,17 +98,17 @@
 
     {% else %}
         <!-- Empty State -->
-        <div class="text-center py-5 my-5">
-            <div class="mb-4">
-                <i class="fas fa-inbox fa-5x" style="color: var(--text-light); opacity: 0.5;"></i>
+        <div class="text-center py-16">
+            <div class="mb-6">
+                <i class="fas fa-inbox text-6xl text-gray-600"></i>
             </div>
-            <h3 class="text-muted mb-3">No Bookings Yet</h3>
-            <p class="text-muted lead col-md-6 mx-auto">
+            <h3 class="text-xl text-gray-400 mb-3">No Bookings Yet</h3>
+            <p class="text-gray-500 max-w-md mx-auto mb-6">
                 You haven't booked any cricket slots yet. 
                 Start your first session today!
             </p>
-            <a href="{% url 'home' %}" class="btn btn-primary btn-lg px-5 mt-3">
-                <i class="fas fa-cricket-ball me-2"></i> Book Your First Slot
+            <a href="{% url 'home' %}" class="inline-flex items-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold transition-colors">
+                <i class="fas fa-cricket-ball mr-2"></i> Book Your First Slot
             </a>
         </div>
     {% endif %}
