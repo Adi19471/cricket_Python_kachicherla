@@ -1,13 +1,29 @@
-# TODO - Date Picker Visibility Fix
+# TODO - Cricket Booking System Fixes
 
-## Task
-Make date picker more visible by changing to white color
+## Task: Fix booked slot display and ensure unavailable slots are properly handled
 
-## Steps Completed:
-- [ ] 1. read_file and analyze relevant files (index.html, modern-ui.css)
-- [ ] 2. Add CSS styles to modern-ui.css for date picker visibility
-- [ ] 3. Test the changes
+### Steps:
+1. [x] Analyze current codebase - DONE
+2. [x] Add missing `rate-per-slot` element in HTML - DONE
+3. [x] Ensure JavaScript handles booked/unavailable slots correctly - DONE
+4. [x] Test the implementation - DONE
 
-## Files to be Edited:
-1. booking/static/booking/modern-ui.css - Add date picker styles
-2. booking/templates/index.html - Add CSS class for date input
+### Fix Details:
+- Add missing `rate-per-slot` element in the Pricing Breakdown section of index.html
+- Ensure `refreshSlotUI()` function properly:
+  - Displays booked slots in RED
+  - Hides/disables unavailable slots
+  - Shows available slots in GREEN
+
+---
+
+## Task: Fix payment redirect - remove alert dialog
+
+### Steps:
+1. [x] Analyze payment.html JavaScript handler - DONE
+2. [x] Remove alert dialog after payment success - DONE
+3. [x] Redirect directly to history page - DONE
+
+### Fix Details:
+- Removed `alert("Payment Successful! Booking Confirmed.")` from payment.html
+- After successful payment, user is redirected directly to `/booking/history/` without any dialog

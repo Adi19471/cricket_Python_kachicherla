@@ -143,6 +143,7 @@ ADMIN_MEDIA_PREFIX = '/static/booking/admin.css'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-RAZORPAY_KEY_ID = "rzp_test_SNS2Tav8Q30FBI"
-RAZORPAY_KEY_SECRET = "xX5N33FYgBcHV0m99MIiWxmq"
+RAZORPAY_KEY_ID = "rzp_live_Sk0GkAIBbpAv9p"
+RAZORPAY_KEY_SECRET = "PSvuN7tJLEXVA5YvM72YjCxE"
+
 

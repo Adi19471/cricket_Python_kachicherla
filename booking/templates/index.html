@@ -59,11 +59,11 @@
                     <div id="selected-slots-list" class="min-h-20 p-3 rounded-xl bg-gray-900 border border-gray-700 flex flex-wrap gap-2"></div>
                 </div>
 
-                <!-- Pricing Breakdown -->
+<!-- Pricing Breakdown -->
                 <div class="p-4 rounded-xl bg-gray-900 border border-gray-700">
                     <div class="flex justify-between mb-3">
                         <span class="text-gray-400 font-semibold">Rate/Slot</span>
-                        <span class="text-primary font-bold">₹500</span>
+                        <span id="rate-per-slot" class="text-green-400 font-bold">₹500</span>
                     </div>
                     <div class="border-t border-gray-700 pt-3">
                         <div class="flex justify-between items-center">
@@ -103,12 +103,12 @@
                     {% for slot in slots %}
                     <div class="slot-box cursor-pointer rounded-lg sm:rounded-xl p-2 sm:p-3 border-2 border-gray-700 bg-gray-900 hover:border-primary hover:scale-105 transition-all text-center"
                          data-slot-id="{{ slot.id }}"
-                         data-price="500"
+                         data-price="{{ slot.isa|default:500 }}"
                          data-start="{{ slot.start_time|time:'H:i' }}"
                          data-end="{{ slot.end_time|time:'H:i' }}">
                         <div class="font-bold text-white mb-1">{{ slot.start_time|time:"H:i" }}</div>
                         <div class="text-gray-500 text-sm mb-1">{{ slot.end_time|time:"H:i" }}</div>
-<div class="text-green-400 font-semibold text-xs sm:text-sm">₹500</div>
+                        <div class="text-green-400 font-semibold text-xs sm:text-sm slot-price">₹{{ slot.isa|default:500 }}</div>
                     </div>
                     {% empty %}
                     <div class="col-span-full text-center py-12">
@@ -124,7 +124,7 @@
 </div>
 
 <!-- Hidden Form -->
-<form id="booking-form" method="post" action="{% url 'book' %}" style="display: none;">
+<form id="booking-form" method="post" action="{% url 'book_slot' %}" style="display: none;">
     {% csrf_token %}
     <input type="hidden" name="date" id="form-date">
     <input type="hidden" name="slots" id="form-slots">
@@ -145,13 +145,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedListEl = document.getElementById('selected-slots-list');
     const payBtn = document.getElementById('proceed-payment');
 
-    // Set default date to today
+// Set default date to today
     const todayStr = new Date().toISOString().split('T')[0];
     dateInput.min = todayStr;
     dateInput.value = todayStr;
 
+    // Initialize rate-per-slot from available slots on page load
+    initializeRatePerSlot();
+
     dateInput.addEventListener('change', loadBookedSlots);
     loadBookedSlots();
+
+// Function to initialize rate-per-slot display
+    function initializeRatePerSlot() {
+        const slotElements = document.querySelectorAll('.slot-box');
+        const ratePerSlotEl = document.getElementById('rate-per-slot');
+        
+        if (slotElements.length > 0) {
+            // Get all unique prices from available slots
+            const prices = [];
+            slotElements.forEach(el => prices.push(parseFloat(el.dataset.price) || 500));
+            const uniquePrices = [...new Set(prices)];
+            if (uniquePrices.length === 1) {
+                ratePerSlotEl.textContent = '₹' + uniquePrices[0];
+            } else {
+                ratePerSlotEl.textContent = 'Variable';
+            }
+        }
+    }
 
 // Delegated slot click handler
     document.addEventListener('click', (e) => {
@@ -280,9 +301,10 @@ function refreshSlotUI() {
                 slotEl.style.borderStyle = '';
                 slotEl.style.borderWidth = '';
                 
-                // Reset price text to green
+// Reset price text to green - use dynamic price from data-price
                 if (priceEl) {
-                    priceEl.textContent = '₹500';
+                    const slotPrice = slotEl.dataset.price || 500;
+                    priceEl.textContent = `₹${slotPrice}`;
                     priceEl.classList.remove('text-white', 'font-bold');
                     priceEl.classList.add('text-green-400');
                 }
@@ -305,19 +327,46 @@ function refreshSlotUI() {
         });
     }
 
-    function updateUI() {
-        const total = selectedSlots.length * 500;
+function updateUI() {
+        // Calculate total by summing each selected slot's dynamic price
+        let total = 0;
+        selectedSlots.forEach(slotId => {
+            const slotEl = document.querySelector(`.slot-box[data-slot-id="${slotId}"]`);
+            if (slotEl) {
+                const price = parseFloat(slotEl.dataset.price) || 500;
+                total += price;
+            }
+        });
+        
         const countText = selectedSlots.length === 1 ? 'slot' : 'slots';
 
         totalPriceEl.textContent = `₹${total.toLocaleString()}`;
         totalAmountEl.textContent = `₹${total.toLocaleString()}`;
         slotCountEl.textContent = `${selectedSlots.length} ${countText} selected`;
 
+        // Update Rate/Slot display - show "Variable" if different prices
+        const ratePerSlotEl = document.getElementById('rate-per-slot');
+        if (selectedSlots.length > 0) {
+            const prices = selectedSlots.map(sid => {
+                const el = document.querySelector(`.slot-box[data-slot-id="${sid}"]`);
+                return el ? parseFloat(el.dataset.price) || 500 : 500;
+            });
+            const uniquePrices = [...new Set(prices)];
+            if (uniquePrices.length === 1) {
+                ratePerSlotEl.textContent = `₹${uniquePrices[0]}`;
+            } else {
+                ratePerSlotEl.textContent = 'Variable';
+            }
+        } else {
+            ratePerSlotEl.textContent = '₹500';
+        }
+
         // Update selected chips
         selectedListEl.innerHTML = '';
         selectedSlots.forEach(slotId => {
             const slotEl = document.querySelector(`.slot-box[data-slot-id="${slotId}"]`);
             if (slotEl) {
+                const slotPrice = parseFloat(slotEl.dataset.price) || 500;
                 const chip = document.createElement('div');
                 chip.className = 'flex items-center justify-between p-2 rounded-lg bg-primary/20 border border-primary/30';
                 chip.innerHTML = `
@@ -330,7 +379,10 @@ function refreshSlotUI() {
                             <small class="text-gray-400 text-xs">${slotEl.dataset.end}</small>
                         </div>
                     </div>
-                    <i class="fas fa-times text-gray-400 cursor-pointer hover:text-red-400" onclick="deselectSlot('${slotId}')"></i>
+                    <div class="text-right">
+                        <div class="text-primary font-bold text-sm">₹${slotPrice}</div>
+                        <i class="fas fa-times text-gray-400 cursor-pointer hover:text-red-400" onclick="deselectSlot('${slotId}')"></i>
+                    </div>
                 `;
                 selectedListEl.appendChild(chip);
             }
@@ -369,7 +421,7 @@ function refreshSlotUI() {
         formData.append('slots', selectedSlots.join(','));
 
         try {
-            const response = await fetch("{% url 'book' %}", {
+const response = await fetch("{% url 'book_slot' %}", {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }

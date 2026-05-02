@@ -110,7 +110,7 @@
 // Razorpay Options
 var options = {
     key: "{{ key }}",
-    amount: {{ booking.total_amount|floatformat:0 }} * 100,
+    amount: {{ booking.total_amount|floatformat:0 }},
     currency: "INR",
     name: "Cricket Booking",
     description: "Turf Booking - {{ booking.date|date:'d M Y' }}",
@@ -132,10 +132,13 @@ var options = {
             }
         })
         .then(function(res) { return res.json(); })
-        .then(function(data) {
+.then(function(data) {
             console.log('Payment verification response:', data);
-            if (data.success) {
-                alert("Payment Successful! Booking Confirmed.");
+            if (data.success && data.redirect_url) {
+                // Redirect directly to booking detail page showing confirmed status
+                window.location.href = data.redirect_url;
+            } else if (data.success) {
+                // Fallback to history if no redirect_url
                 window.location.href = "{% url 'history' %}";
             } else {
                 alert(data.error || "Payment verification failed. Please contact support.");
