@@ -1,29 +1,12 @@
-# TODO - Cricket Booking System Fixes
+# TODO - Professional UI Refresh
 
-## Task: Fix booked slot display and ensure unavailable slots are properly handled
+- [ ] Add shared component CSS styles in `booking/static/booking/styles.css`
+- [ ] Update `booking/templates/base.html` layout to use consistent container/background + messages area
+- [ ] Update `booking/templates/index.html` (slot booking screen) to use shared card/button/badge/input classes
+- [ ] Update `booking/templates/history.html` to use shared components
+- [ ] Update `booking/templates/booking_detail.html` to use shared components
+- [ ] Update `booking/templates/register.html` and `booking/templates/registration/login.html` to use shared components (consistent auth forms)
+- [x] Update `booking/templates/payment.html` to match overall UI
 
-### Steps:
-1. [x] Analyze current codebase - DONE
-2. [x] Add missing `rate-per-slot` element in HTML - DONE
-3. [x] Ensure JavaScript handles booked/unavailable slots correctly - DONE
-4. [x] Test the implementation - DONE
+- [ ] Quick run/test: load each page and confirm no JS breakage
 
-### Fix Details:
-- Add missing `rate-per-slot` element in the Pricing Breakdown section of index.html
-- Ensure `refreshSlotUI()` function properly:
-  - Displays booked slots in RED
-  - Hides/disables unavailable slots
-  - Shows available slots in GREEN
-
----
-
-## Task: Fix payment redirect - remove alert dialog
-
-### Steps:
-1. [x] Analyze payment.html JavaScript handler - DONE
-2. [x] Remove alert dialog after payment success - DONE
-3. [x] Redirect directly to history page - DONE
-
-### Fix Details:
-- Removed `alert("Payment Successful! Booking Confirmed.")` from payment.html
-- After successful payment, user is redirected directly to `/booking/history/` without any dialog

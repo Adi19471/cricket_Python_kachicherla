@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Cricket Booking{% endblock %}
+
+{% block content %}
+<div class="py-8">
+  <section class="mb-10">
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-8 lg:p-10">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-8">
+        <div class="flex-1">
+          <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
+            <i class="fas fa-cricket-bat-ball text-primary mr-3"></i>
+            Welcome to Kohli Sports Acadamy
+          </h1>
+          <p class="text-gray-300 text-base leading-relaxed">
+            Book your cricket ground time slots with a smooth, real-time availability experience.
+            Select slots in pairs, pay securely with Razorpay, and manage your bookings anytime.
+          </p>
+
+          <div class="mt-6 flex flex-col sm:flex-row gap-3">
+            <a href="{% url 'home' %}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold transition-all">
+              <i class="fas fa-calendar-day mr-2"></i>
+              Book Slots
+            </a>
+            <a href="{% url 'history' %}" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-all">
+              <i class="fas fa-history mr-2"></i>
+              My Bookings
+            </a>
+          </div>
+        </div>
+
+        <div class="w-full lg:w-96">
+          <div class="rounded-2xl bg-gray-900 border border-gray-700 p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
+                <i class="fas fa-shield-alt text-primary"></i>
+              </div>
+              <div>
+                <div class="text-white font-bold">Secure Payment</div>
+                <div class="text-gray-400 text-sm">Razorpay checkout integration</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
+                <i class="fas fa-clock text-primary"></i>
+              </div>
+              <div>
+                <div class="text-white font-bold">Live Availability</div>
+                <div class="text-gray-400 text-sm">Pending bookings auto-expire</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
+                <i class="fas fa-tasks text-primary"></i>
+              </div>
+              <div>
+                <div class="text-white font-bold">Manage Bookings</div>
+                <div class="text-gray-400 text-sm">Cancel or reschedule your session</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+      <div class="text-primary text-2xl mb-3"><i class="fas fa-calendar-alt"></i></div>
+      <h3 class="text-white font-bold mb-2">Choose a Date</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Pick your preferred day and explore available slots instantly.</p>
+    </div>
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+      <div class="text-primary text-2xl mb-3"><i class="fas fa-hand-pointer"></i></div>
+      <h3 class="text-white font-bold mb-2">Select in Pairs</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Slots are selected in consecutive pairs to match booking rules.</p>
+    </div>
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6">
+      <div class="text-primary text-2xl mb-3"><i class="fas fa-lock"></i></div>
+      <h3 class="text-white font-bold mb-2">Pay & Confirm</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Complete payment securely; confirmation happens immediately.</p>
+    </div>
+</section>
+
+  <!-- Location + Terms -->
+  <section class="mt-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+        <div class="p-6 border-b border-gray-700">
+          <h2 class="text-xl font-bold text-white">
+            <i class="fas fa-location-dot text-primary mr-2"></i>
+            Our Location
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">Use the map below to find Kohli Sports Acadamy.</p>
+        </div>
+        <div class="p-4">
+          <div class="rounded-xl overflow-hidden border border-gray-700">
+            <iframe
+              title="Location Map"
+              class="w-full"
+              height="360"
+              style="border:0;"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224345.123!2d77.000000!3d12.000000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2sKohli%20Sports%20Acadamy!5e0!3m2!1sen!2sin">
+            </iframe>
+          </div>
+          <div class="mt-4 text-sm text-gray-300">
+            <div class="font-semibold text-white">Address</div>
+            <div class="text-gray-400">Update this address to your real ground location.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+        <div class="p-6 border-b border-gray-700">
+          <h2 class="text-xl font-bold text-white">
+            <i class="fas fa-gavel text-primary mr-2"></i>
+            Terms & Conditions
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">Rules to apply before booking.</p>
+        </div>
+        <div class="p-6">
+          <ul class="list-disc pl-5 text-gray-300 space-y-2">
+            <li>Slots are selected in consecutive pairs: <b>2, 4, 6, or 8</b>.</li>
+            <li>Pending (unpaid) bookings can auto-expire to free availability.</li>
+            <li>Completed bookings cannot be cancelled/rescheduled.</li>
+            <li>Payment is processed via Razorpay. Confirmation happens after verification.</li>
+          </ul>
+          <div class="mt-5">
+            <a href="{% url 'contract' %}" class="inline-flex items-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold transition-all">
+              <i class="fas fa-scroll mr-2"></i>
+              Read Full Contract
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+

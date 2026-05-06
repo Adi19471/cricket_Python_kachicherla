@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Service - Cricket Booking{% endblock %}
+
+{% block content %}
+<div class="py-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+      <div class="p-6 bg-gradient-to-r from-primary to-green-500">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+          <i class="fas fa-bullhorn mr-3"></i>Services
+        </h1>
+        <p class="text-gray-900/90 mt-2">What you can do on this platform.</p>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-gray-900/40 border border-gray-700 rounded-2xl p-5">
+            <div class="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center mb-4">
+              <i class="fas fa-calendar-day text-primary text-xl"></i>
+            </div>
+            <h3 class="text-white font-bold mb-2">Slot Booking</h3>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              Pick available time slots and reserve your turf session.
+            </p>
+          </div>
+
+          <div class="bg-gray-900/40 border border-gray-700 rounded-2xl p-5">
+            <div class="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center mb-4">
+              <i class="fas fa-lock text-primary text-xl"></i>
+            </div>
+            <h3 class="text-white font-bold mb-2">Secure Payment</h3>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              Razorpay-based payment flow with immediate confirmation.
+            </p>
+          </div>
+
+          <div class="bg-gray-900/40 border border-gray-700 rounded-2xl p-5">
+            <div class="w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center mb-4">
+              <i class="fas fa-toolbox text-primary text-xl"></i>
+            </div>
+            <h3 class="text-white font-bold mb-2">Manage Bookings</h3>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              View history and cancel/reschedule allowed bookings.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8 bg-gray-900/40 border border-gray-700 rounded-2xl p-6">
+          <h2 class="text-white font-bold text-lg mb-3"><i class="fas fa-info-circle text-primary mr-2"></i>Need Help?</h2>
+          <p class="text-gray-300 text-sm leading-relaxed">
+            In this demo, help/support is not wired. In a real app, add contact/chat/email support routes.
+          </p>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="{% url 'contract' %}" class="inline-flex justify-center px-6 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-all">
+            <i class="fas fa-scroll mr-2"></i>View Contract
+          </a>
+          <a href="{% url 'home' %}" class="inline-flex justify-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold transition-all">
+            <i class="fas fa-calendar-day mr-2"></i>Book Slots
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

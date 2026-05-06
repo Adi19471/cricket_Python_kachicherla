@@ -54,6 +54,22 @@ def home(request):
 
 # ==================== API ENDPOINTS ====================
 
+def _cancel_expired_pending_bookings(date, ttl_minutes=1):
+    """Auto-cancel pending (unpaid) bookings older than TTL to immediately free slots."""
+    expiry_time = timezone.now() - timedelta(minutes=ttl_minutes)
+
+    expired_pending = Booking.objects.filter(
+        date=date,
+        status='pending',
+        is_paid=False,
+        created_at__lt=expiry_time,
+    )
+
+    # Only update those that are still pending
+    for b in expired_pending:
+        b.cancel_booking()
+
+
 @require_http_methods(["GET"])
 @login_required
 def api_booked_slots(request, date_str):
@@ -61,54 +77,58 @@ def api_booked_slots(request, date_str):
     date = parse_date(date_str)
     if not date:
         return JsonResponse({'error': 'Invalid date'}, status=400)
-    
+
+    # Auto-expire stale pending bookings so UI stops showing them as booked/pending.
+    _cancel_expired_pending_bookings(date, ttl_minutes=10)
+
     # Get booked slots (paid and confirmed/completed)
     booked_qs = Booking.objects.filter(
-        date=date, 
+        date=date,
         is_paid=True,
         status__in=['confirmed', 'completed']
     ).values_list('slots__id', flat=True)
     booked_slots = list(set(booked_qs))
-    
-    # CRITICAL FIX: Also block slots that have pending bookings to prevent duplicate bookings
+
+    # Block slots that still have pending bookings
     pending_booked_qs = Booking.objects.filter(
         date=date,
         status='pending',
         is_paid=False
     ).values_list('slots__id', flat=True)
     pending_booked_slots = list(set(pending_booked_qs))
-    
+
     # Combine all blocked slots (paid + pending)
     all_blocked_slots = list(set(booked_slots + pending_booked_slots))
-    
-    # Get cancelled/pending bookings to block
+
+    # Get cancelled bookings to block (kept for backwards compatibility/debugging)
     cancelled_qs = Booking.objects.filter(
         date=date,
         status='cancelled'
     ).values_list('slots__id', flat=True)
-    
+
     # Get confirmed/completed bookings
     completed_booking_exists = Booking.objects.filter(
-        date=date, 
+        date=date,
         status__in=['confirmed', 'completed']
     ).exists()
-    
+
     blocked_empty_slots = []
     if completed_booking_exists:
         completed_booking_slots = set(Booking.objects.filter(
             date=date,
             status__in=['confirmed', 'completed']
         ).values_list('slots__id', flat=True))
-        
+
         all_slots = set(TimeSlot.objects.values_list('id', flat=True))
         blocked_empty_slots = list(all_slots - completed_booking_slots)
-    
+
     return JsonResponse({
-        'booked_slots': all_blocked_slots,  # Now includes pending bookings
+        'booked_slots': all_blocked_slots,
         'blocked_empty_slots': blocked_empty_slots,
         'cancelled_slots': list(cancelled_qs),
-        'pending_booked_slots': pending_booked_slots  # Also send this for debugging
+        'pending_booked_slots': pending_booked_slots
     })
+
 
 # ==================== BOOKING VIEWS ====================
 
@@ -150,6 +170,9 @@ def book_slot(request):
             available_slots = []
             conflicting_slots = []
             
+            # Auto-expire stale pending bookings so user can immediately pick freed slots.
+            _cancel_expired_pending_bookings(date, ttl_minutes=10)
+
             for slot_id in slot_ids:
                 # Check for PAID + Confirmed/Completed bookings
                 existing_paid_booking = Booking.objects.filter(
@@ -158,19 +181,20 @@ def book_slot(request):
                     is_paid=True,
                     status__in=['confirmed', 'completed']
                 ).exists()
-                
-                # CRITICAL FIX: Also check for ANY pending booking (unpaid)
+
+                # Pending booking (unpaid)
                 existing_pending_booking = Booking.objects.filter(
                     date=date,
                     slots__id=slot_id,
                     status='pending',
                     is_paid=False
                 ).exists()
-                
+
                 if not existing_paid_booking and not existing_pending_booking:
                     available_slots.append(slot_id)
                 else:
                     conflicting_slots.append(slot_id)
+
             
             if len(available_slots) != len(slot_ids):
                 # Provide more specific error message
@@ -225,8 +249,9 @@ def book_slot(request):
             })
             booking.razorpay_order_id = order['id']
             booking.save()
-            
+
             return JsonResponse({
+
                 'success': True,
                 'order_id': order['id'],
                 'amount': total_amount,
@@ -280,6 +305,24 @@ def payment_failed(request):
     except Booking.DoesNotExist:
         pass
     return redirect('home')
+
+
+@login_required
+@require_POST
+def cancel_pending_booking(request, booking_id):
+
+    """Cancel a pending booking to free slots (used when user dismisses Razorpay)."""
+    try:
+        booking = Booking.objects.get(id=booking_id, user=request.user)
+        # Always free slots if this is still an unpaid pending booking
+        if booking.status == 'pending' and not booking.is_paid:
+            booking.cancel_booking()
+        return JsonResponse({'success': True})
+
+
+    except Booking.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Booking not found'}, status=404)
+
 
 # ==================== BOOKING MANAGEMENT VIEWS ====================
 

@@ -9,6 +9,7 @@ urlpatterns = [
     path('book/', views.book_slot, name='book_slot'),
     path('payment-success/', views.payment_success, name='payment_success'),
     path('payment-failed/', views.payment_failed, name='payment_failed'),
+    path('cancel-pending-booking/<int:booking_id>/', views.cancel_pending_booking, name='cancel_pending_booking'),
     path('history/', views.history, name='history'),
     path('booking/<int:booking_id>/', views.booking_detail, name='booking_detail'),
     path('booking/<int:booking_id>/cancel/', views.cancel_booking, name='cancel_booking'),
@@ -20,3 +21,4 @@ urlpatterns = [
     path('admin/booking/<int:booking_id>/modify-amount/', views.modify_booking_amount, name='modify_booking_amount'),
     path('admin/booking/<int:booking_id>/modify-timing/', views.modify_booking_timing, name='modify_booking_timing'),
 ]
+

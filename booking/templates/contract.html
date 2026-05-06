@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Contract - Cricket Booking{% endblock %}
+
+{% block content %}
+<div class="py-8">
+  <div class="max-w-3xl mx-auto">
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+      <div class="p-6 bg-gradient-to-r from-primary to-green-500">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+          <i class="fas fa-scroll mr-3"></i>Contract / Terms & Conditions
+        </h1>
+        <p class="text-gray-900/90 mt-2">Please read the following before booking a slot.</p>
+      </div>
+
+      <div class="p-6">
+        <div class="space-y-5 text-gray-300">
+          <div>
+            <h2 class="text-white font-bold mb-2"><i class="fas fa-calendar-check text-primary mr-2"></i>Booking Rules</h2>
+            <ul class="list-disc pl-5 text-sm sm:text-base space-y-2 text-gray-300">
+              <li>Slots must be selected in consecutive pairs (2, 4, 6, 8).</li>
+              <li>Pending (unpaid) bookings may expire automatically to free availability.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="text-white font-bold mb-2"><i class="fas fa-shield-alt text-primary mr-2"></i>Payments</h2>
+            <ul class="list-disc pl-5 text-sm sm:text-base space-y-2 text-gray-300">
+              <li>Payments are processed via Razorpay.</li>
+              <li>Your booking is confirmed after successful payment verification.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="text-white font-bold mb-2"><i class="fas fa-ban text-primary mr-2"></i>Cancellations & Rescheduling</h2>
+            <ul class="list-disc pl-5 text-sm sm:text-base space-y-2 text-gray-300">
+              <li>Completed bookings cannot be cancelled or rescheduled.</li>
+              <li>Pending bookings can be cancelled before confirmation.</li>
+            </ul>
+          </div>
+
+          <div class="bg-gray-900/40 border border-gray-700 rounded-xl p-4">
+            <p class="text-sm text-gray-300">
+              This is a simplified contract page for your demo app. Update the text as per your real business policies.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+          <a href="{% url 'service' %}" class="inline-flex justify-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold transition-all">
+            <i class="fas fa-bolt mr-2"></i>Our Services
+          </a>
+          <a href="{% url 'home' %}" class="inline-flex justify-center px-6 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-all">
+            <i class="fas fa-calendar-day mr-2"></i>Book Slots
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
