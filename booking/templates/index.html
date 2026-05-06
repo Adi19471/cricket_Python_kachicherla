@@ -472,6 +472,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (data.success) {
+        // Immediately refresh UI so the selected slots become blocked/disabled
+        // while payment is pending.
+        loadBookedSlots();
+
         const options = {
           key: data.key,
           amount: data.amount * 100,
@@ -497,6 +501,8 @@ document.addEventListener('DOMContentLoaded', () => {
                       'X-CSRFToken': csrf,
                     },
                   });
+                  // After cancelling pending booking, refresh slot UI.
+                  loadBookedSlots();
                 }
               } catch (e) {
                 console.log('cancel pending failed', e);
@@ -504,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
         };
+
 
 
 
