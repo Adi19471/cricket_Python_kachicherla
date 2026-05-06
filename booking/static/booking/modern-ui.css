@@ -30,11 +30,17 @@ body {
 ========================= */
 /* Style the date input for better visibility */
 input[type="date"] {
-    background-color: #ffffff !important;
-    color: #1f2937 !important;
-    border: 2px solid #22c55e !important;
+  /* background-color: #ffffff !important; */
+    color: #fbfdff !important;
+    /* border: 2px solid #22c55e !important; */
     cursor: pointer;
+
 }
+
+
+  
+
+
 
 /* Focus state */
 input[type="date"]:focus {
