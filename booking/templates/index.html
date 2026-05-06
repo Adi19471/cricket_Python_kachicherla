@@ -289,10 +289,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function refreshSlotUI() {
+    const date = dateInput.value;
+    const now = new Date();
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    const isToday = date === new Date().toISOString().split('T')[0];
+
     document.querySelectorAll('.slot-box').forEach(slotEl => {
       const slotId = slotEl.dataset.slotId;
       const priceEl = slotEl.querySelector('.slot-price');
+
+      // Hide past time slots for today (based on end_time)
+      // If end_time <= current time => past, hide it.
+      const endStr = slotEl.dataset.end; // HH:MM
+      let pastTime = false;
+      if (isToday && endStr) {
+        const [hStr, mStr] = endStr.split(':');
+        const endMinutes = (parseInt(hStr, 10) * 60) + parseInt(mStr, 10);
+        pastTime = endMinutes <= nowMinutes;
+      }
+
       const isUnavailable = bookedSlots.has(slotId) || blockedEmptySlots.has(slotId);
+
+      if (pastTime) {
+        // completely hide past slots for today
+        slotEl.classList.add('slot-hidden-past');
+        slotEl.style.display = 'none';
+        return;
+      }
+
+      // show again if previously hidden
+      slotEl.style.display = '';
 
       if (isUnavailable) {
         slotEl.classList.add('slot-unavailable');
