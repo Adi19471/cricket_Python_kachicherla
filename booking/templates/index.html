@@ -327,8 +327,27 @@ document.addEventListener('DOMContentLoaded', () => {
       slotEl.style.display = '';
 
       if (isUnavailable) {
-        // Hide booked/pending slots completely (other users should not see them)
-        slotEl.style.display = 'none';
+        // Hide booked/pending slots completely from others.
+        // But if the user is currently selecting them, keep them visible as "not expected" / informative.
+        const isSelected = selectedSlots.includes(slotId);
+        if (!isSelected) {
+          slotEl.style.display = 'none';
+          return;
+        }
+
+        // Show a small inline label to indicate the slot became unavailable while user had it selected.
+        slotEl.style.display = '';
+        slotEl.classList.add('slot-unavailable');
+
+        const existingLabel = slotEl.querySelector('.slot-unavailable-label');
+        if (!existingLabel) {
+          const label = document.createElement('div');
+          label.className = 'slot-unavailable-label mt-2 text-[11px] text-red-300 font-semibold';
+          label.textContent = 'Not expected (slot pending/blocked)';
+          slotEl.appendChild(label);
+        }
+
+        slotEl.style.pointerEvents = 'none';
         return;
       } else {
         slotEl.classList.remove('slot-unavailable');

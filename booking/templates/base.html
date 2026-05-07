@@ -372,11 +372,11 @@ footer {
                     <div class="app-alert app-alert-{{ message.tags }} flex items-center justify-center">
                         <i class="fas app-alert-icon mr-3">
                             {% if message.tags == 'success' %}
-                                fa-check-circle
+                           
                             {% elif message.tags == 'error' or message.tags == 'danger' %}
                                 fa-exclamation-triangle
                             {% else %}
-                                fa-info-circle
+                        
                             {% endif %}
                         </i>
                         <span>{{ message }}</span>
