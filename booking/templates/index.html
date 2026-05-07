@@ -272,11 +272,17 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`/api/booked-slots/${date}/`)
       .then(res => res.json())
       .then(data => {
+        // booked_slots already includes paid confirmed/completed + unpaid pending slots (blocked)
         bookedSlots = new Set(data.booked_slots || []);
         blockedEmptySlots = new Set(data.blocked_empty_slots || []);
+
+        // Ensure selection does not keep showing confirmed/blocked slots as selected
+        selectedSlots = selectedSlots.filter(id => !bookedSlots.has(id) && !blockedEmptySlots.has(id));
+
         refreshSlotUI();
         updateUI();
       })
+
       .catch(() => {
         bookedSlots.clear();
         blockedEmptySlots.clear();
@@ -321,30 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
       slotEl.style.display = '';
 
       if (isUnavailable) {
-        slotEl.classList.add('slot-unavailable');
-        slotEl.classList.remove('cursor-pointer');
-        slotEl.style.pointerEvents = 'none';
-
-        // Different legend colours for available/booked/selected
-        slotEl.style.background = 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)';
-        slotEl.style.borderColor = '#ef4444';
-
-        // Replace price display for booked
-        if (priceEl) {
-          priceEl.textContent = 'BOOKED';
-          priceEl.classList.remove('text-green-300');
-          priceEl.classList.add('text-white');
-        }
-
-        // Disable text emphasis
-        const startEl = slotEl.querySelector('.font-bold');
-        const endEl = slotEl.querySelector('.text-gray-500');
-        if (startEl) startEl.classList.add('text-white');
-        if (endEl) {
-          endEl.classList.remove('text-gray-500');
-          endEl.classList.add('text-gray-200');
-        }
-
+        // Hide booked/pending slots completely (other users should not see them)
+        slotEl.style.display = 'none';
+        return;
       } else {
         slotEl.classList.remove('slot-unavailable');
         slotEl.style.pointerEvents = 'auto';

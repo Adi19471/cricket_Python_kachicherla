@@ -81,32 +81,28 @@ def api_booked_slots(request, date_str):
     # Auto-expire stale pending bookings so UI stops showing them as booked/pending.
     _cancel_expired_pending_bookings(date, ttl_minutes=10)
 
-    # Get booked slots (paid and confirmed/completed)
-    booked_qs = Booking.objects.filter(
+    # Get booked slots
+    booked_confirmed_qs = Booking.objects.filter(
         date=date,
         is_paid=True,
         status__in=['confirmed', 'completed']
     ).values_list('slots__id', flat=True)
-    booked_slots = list(set(booked_qs))
+    booked_confirmed_slots = list(set(booked_confirmed_qs))
 
-    # Block slots that still have pending bookings
-    pending_booked_qs = Booking.objects.filter(
+    # Pending (unpaid) bookings - should also be hidden for others
+    booked_pending_qs = Booking.objects.filter(
         date=date,
         status='pending',
         is_paid=False
     ).values_list('slots__id', flat=True)
-    pending_booked_slots = list(set(pending_booked_qs))
+    booked_pending_slots = list(set(booked_pending_qs))
 
-    # Combine all blocked slots (paid + pending)
-    all_blocked_slots = list(set(booked_slots + pending_booked_slots))
+    all_booked_slots = list(set(booked_confirmed_slots + booked_pending_slots))
 
-    # Get cancelled bookings to block (kept for backwards compatibility/debugging)
-    cancelled_qs = Booking.objects.filter(
-        date=date,
-        status='cancelled'
-    ).values_list('slots__id', flat=True)
+    # cancelled bookings (not used for blocking)
+    cancelled_qs = Booking.objects.filter(date=date, status='cancelled').values_list('slots__id', flat=True)
 
-    # Get confirmed/completed bookings
+    # Keep your existing "blocked_empty_slots" rule (once any confirmed/completed exists)
     completed_booking_exists = Booking.objects.filter(
         date=date,
         status__in=['confirmed', 'completed']
@@ -123,10 +119,15 @@ def api_booked_slots(request, date_str):
         blocked_empty_slots = list(all_slots - completed_booking_slots)
 
     return JsonResponse({
-        'booked_slots': all_blocked_slots,
+        # UI uses these for disabling/hiding
+        'booked_slots': all_booked_slots,
         'blocked_empty_slots': blocked_empty_slots,
+
+        # Keep these for backwards compatibility (not used by new UI logic)
         'cancelled_slots': list(cancelled_qs),
-        'pending_booked_slots': pending_booked_slots
+        'pending_booked_slots': booked_pending_slots,
+        'booked_confirmed_slots': booked_confirmed_slots,
+        'booked_pending_slots_only': booked_pending_slots,
     })
 
 
